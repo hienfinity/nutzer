@@ -1,4 +1,4 @@
-"""Entity-Klasse für Nutzerdaten."""
+"""Entity-Klasse fuer Nutzerdaten."""
 
 from dataclasses import InitVar
 from datetime import date, datetime
@@ -10,13 +10,14 @@ from sqlalchemy.orm import Mapped, mapped_column, reconstructor, relationship
 
 from nutzer.entity.adresse import Adresse
 from nutzer.entity.base import Base
+from nutzer.entity.einstellung import Einstellung
 from nutzer.entity.interesse import Interesse
-from nutzer.entity.konto import Konto
 from nutzer.entity.rolle import Rolle
 from nutzer.entity.status import Status
 
+
 class Nutzer(Base):
-    """Entity-Klasse für Nutzerdaten."""
+    """Entity-Klasse fuer Nutzerdaten."""
 
     __tablename__ = "nutzer"
 
@@ -60,14 +61,17 @@ class Nutzer(Base):
         back_populates="nutzer",
         innerjoin=True,
         cascade="save-update, delete",
+        uselist=False,
     )
     """Die in einer 1:1-Beziehung referenzierte Adresse."""
 
-    konten: Mapped[list[Konto]] = relationship(
+    einstellung: Mapped[Einstellung] = relationship(
         back_populates="nutzer",
+        innerjoin=True,
         cascade="save-update, delete",
+        uselist=False,
     )
-    """Die in einer 1:N-Beziehung referenzierten Konten."""
+    """Die in einer 1:1-Beziehung referenzierte Einstellung."""
 
     interessen_json: Mapped[list[str] | None] = mapped_column(
         JSON,
@@ -98,7 +102,7 @@ class Nutzer(Base):
         self,
         interessen: list[Interesse] | None,
     ) -> None:
-        """Für SQLAlchemy: JSON-Array für DB-Spalte setzen für INSERT oder UPDATE.
+        """Fuer SQLAlchemy: JSON-Array fuer DB-Spalte setzen fuer INSERT oder UPDATE.
 
         :param interessen: Liste mit Interessen als Enum
         """
