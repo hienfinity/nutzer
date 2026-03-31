@@ -6,12 +6,12 @@
 build
 docs
 extras
-patient.egg-info
+nutzer.egg-info
 htmlcov
 log
 site
-src/patient/**/__pycache__
-src/patient/config/resources/tls/key.pem
+src/nutzer/**/__pycache__
+src/nutzer/config/resources/tls/key.pem
 tests
 .coverage
 .editorconfig
