@@ -36,6 +36,9 @@ class Nutzer(Base):
     beitrittsdatum: Mapped[date]
     """Das Beitrittsdatum."""
 
+    aktiv: Mapped[bool]
+    """Gibt an, ob der Nutzer aktuell aktiv ist."""
+
     rolle: Mapped[Rolle]
     """Die Rolle."""
 
@@ -108,6 +111,7 @@ class Nutzer(Base):
         """
         logger.debug("interessen={}", interessen)
         logger.debug("self={}", self)
+        self.interessen = interessen if interessen is not None else []
         self.interessen_json = (
             [interesse_enum.name for interesse_enum in interessen]
             if interessen is not None
@@ -141,9 +145,11 @@ class Nutzer(Base):
         self.telefonnummer = nutzer.telefonnummer
         self.geburtsdatum = nutzer.geburtsdatum
         self.beitrittsdatum = nutzer.beitrittsdatum
+        self.aktiv = nutzer.aktiv
         self.rolle = nutzer.rolle
         self.status = nutzer.status
         self.interessen_json = nutzer.interessen_json
+        self.interessen = nutzer.interessen
 
     def __eq__(self, other: Any) -> bool:
         """Vergleich auf Gleichheit, ohne Joins zu verursachen."""
@@ -166,6 +172,7 @@ class Nutzer(Base):
             + f"telefonnummer={self.telefonnummer}, "
             + f"geburtsdatum={self.geburtsdatum}, "
             + f"beitrittsdatum={self.beitrittsdatum}, "
+            + f"aktiv={self.aktiv}, "
             + f"rolle={self.rolle}, status={self.status}, "
             + f"interessen_json={self.interessen_json}, "
             + f"erzeugt={self.erzeugt}, aktualisiert={self.aktualisiert})"
