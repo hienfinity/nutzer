@@ -2,5 +2,6 @@
 
 from nutzer.entity.base import Base
 from nutzer.entity.rolle import Rolle
+from nutzer.entity.status import Status
 
-__all__ = ["Base", "Rolle"]
+__all__ = ["Base", "Rolle", "Status"]
