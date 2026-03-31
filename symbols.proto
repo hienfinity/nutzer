@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+// Not necessary for Python but should still be declared to avoid name collisions
+// in the Protocol Buffers namespace and non-Python languages
+package protoblog;
+option java_outer_classname = "SymbolsProtos";
+option java_package = "org.sonar.python.types.protobuf";
+
+enum ParameterKind {
+  POSITIONAL_ONLY = 0;
+  POSITIONAL_OR_KEYWORD = 1;
+  KEYWORD_ONLY = 2;
+  VAR_KEYWORD = 3;
+  VAR_POSITIONAL = 4;
+}
+
+enum TypeKind {
+  INSTANCE = 0;
+  UNION = 1;
+  TYPE = 2;
+  TUPLE = 3;
+  TYPE_VAR = 4;
+  ANY = 5;
+  NONE = 6;
+  TYPE_ALIAS = 7;
+  CALLABLE = 8;
+  LITERAL = 9;
+  UNINHABITED = 10;
+  UNBOUND = 11;
+  TYPED_DICT = 12;
+}
+
+message Type {
+  string pretty_printed_name = 1;
+  TypeKind kind = 2;
+  repeated Type args = 3;
+  optional string fully_qualified_name = 4;
+  bool is_self = 5;
+}
+
+message ParameterSymbol {
+  optional string name = 1;
+  ParameterKind kind = 2;
+  optional Type type_annotation = 3;
+  bool has_default = 4;
+}
+
+message FunctionSymbol {
+  string name = 1;
+  string fully_qualified_name = 2;
+  optional Type return_annotation = 4;
+  repeated ParameterSymbol parameters = 5;
+  bool has_decorators = 6;
+  repeated string resolved_decorator_names = 7;
+  bool is_abstract = 8;
+  bool is_asynchronous = 9;
+  bool is_final = 10;
+  bool is_overload = 11;
+  bool is_property = 12;
+  bool is_static = 13;
+  bool is_class_method = 14;
+  repeated string valid_for = 15;
+}
+
+message OverloadedFunctionSymbol {
+  string name = 1;
+  string fullname = 2;
+  repeated FunctionSymbol definitions = 3;
+  repeated string valid_for = 4;
+}
+
+message ClassSymbol {
+  string name = 1;
+  string fully_qualified_name = 2;
+  repeated string super_classes = 4;
+  repeated FunctionSymbol methods = 5;
+  repeated OverloadedFunctionSymbol overloaded_methods = 6;
+  bool has_decorators = 7;
+  bool has_metaclass = 8;
+  bool is_enum = 9;
+  bool is_generic = 10;
+  bool is_protocol = 11;
+  optional string metaclass_name = 12;
+  repeated string valid_for = 13;
+  repeated VarSymbol attributes = 14;
+  repeated ClassSymbol nested_classes = 15;
+}
+
+message ModuleSymbol {
+  string fully_qualified_name = 1;
+  repeated ClassSymbol classes = 2;
+  repeated FunctionSymbol functions = 3;
+  repeated OverloadedFunctionSymbol overloaded_functions = 4;
+  repeated VarSymbol vars = 5;
+}
+
+message VarSymbol {
+  string name = 1;
+  string fully_qualified_name = 2;
+  optional Type type_annotation = 3;
+  bool is_imported_module = 4;
+  repeated string valid_for = 5;
+}

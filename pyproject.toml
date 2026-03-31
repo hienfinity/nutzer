@@ -1,0 +1,74 @@
+[project]
+name = "nutzer"
+version = "2026.4.1"
+description = "Anfangszustand fuer das FastAPI-Projekt Nutzer"
+readme = "README.md"
+authors = [
+    { name = "Juergen Zimmermann", email = "Juergen.Zimmermann@h-ka.de" },
+]
+requires-python = ">=3.14"
+license = "GPL-3.0-or-later"
+dependencies = [
+    "cryptography>=46.0.5",
+    "fastapi>=0.135.1",
+    "httpx[http2]>=0.28.1",
+    "jwcrypto>=1.5.6",
+    "loguru>=0.7.3",
+    "orjson>=3.11.7",
+    "prometheus-client>=0.24.1",
+    "prometheus-fastapi-instrumentator>=7.1.0",
+    "psycopg[binary,pool]>=3.3.3",
+    "psycopg-binary>=3.3.3",
+    "psycopg-pool>=3.3.0",
+    "pydantic[email]>=2.12.5",
+    "pydantic_core>=2.41.5",
+    "python-dotenv>=1.2.2",
+    "python-keycloak>=7.1.1",
+    "python-multipart>=0.0.22",
+    "PyYAML>=6.0.3",
+    "requests==2.32.5",
+    "SQLAlchemy>=2.0.48",
+    "starlette>=0.52.1",
+    "tabulate>=0.10.0",
+    "urllib3>=2.6.3",
+    "uvicorn>=0.41.0",
+]
+
+[project.scripts]
+nutzer = "nutzer:main"
+
+[build-system]
+requires = ["uv_build==0.11.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "fastapi[standard]>=0.135.1",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "pytest-env>=1.6.0",
+    "pytest-html>=4.2.0",
+    "pytest-mock>=3.15.1",
+    "ruff>=0.15.6",
+    "ty>=0.0.23",
+]
+
+[tool.pytest.ini_options]
+minversion = "8.4.1"
+pythonpath = ["src"]
+addopts = "--html=report.html --cov --cov-report=html"
+
+[tool.pytest_env]
+
+[tool.coverage.run]
+include = ["src/nutzer/*"]
+
+[tool.ruff]
+preview = true
+
+[tool.ty.environment]
+python = "./.venv"
+root = ["./src"]
+
+[tool.uv]
+default-groups = "all"
