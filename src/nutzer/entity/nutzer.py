@@ -14,3 +14,20 @@ from nutzer.entity.interesse import Interesse
 from nutzer.entity.konto import Konto
 from nutzer.entity.rolle import Rolle
 from nutzer.entity.status import Status
+
+class Nutzer(Base):
+    """Entity-Klasse für Nutzerdaten."""
+
+    __tablename__ = "nutzer"
+
+    vorname: Mapped[str]
+    """Der Vorname."""
+
+    nachname: Mapped[str]
+    """Der Nachname."""
+
+    telefonnummer: Mapped[str | None]
+    """Die optionale Telefonnummer."""
+
+    geburtsdatum: Mapped[date]
+    """Das Geburtsdatum."""
