@@ -124,3 +124,45 @@ class Nutzer(Base):
             self.interessen,  # pyright: ignore[reportAttributeAccessIssue]
         )
 
+
+    def set(self, nutzer: Self) -> None:
+        """Primitive Attributwerte überschreiben, z.B. vor DB-Update.
+
+        :param nutzer: Nutzer-Objekt mit den aktuellen Daten
+        """
+        self.vorname = nutzer.vorname
+        self.nachname = nutzer.nachname
+        self.email = nutzer.email
+        self.username = nutzer.username
+        self.telefonnummer = nutzer.telefonnummer
+        self.geburtsdatum = nutzer.geburtsdatum
+        self.beitrittsdatum = nutzer.beitrittsdatum
+        self.rolle = nutzer.rolle
+        self.status = nutzer.status
+        self.interessen_json = nutzer.interessen_json
+
+    def __eq__(self, other: Any) -> bool:
+        """Vergleich auf Gleichheit, ohne Joins zu verursachen."""
+        if self is other:
+            return True
+        if not isinstance(other, type(self)):
+            return False
+        return self.id is not None and self.id == other.id
+
+    def __hash__(self) -> int:
+        """Hash-Funktion anhand der ID, ohne Joins zu verursachen."""
+        return hash(self.id) if self.id is not None else hash(type(self))
+
+    def __repr__(self) -> str:
+        """Ausgabe eines Nutzers als String, ohne Joins zu verursachen."""
+        return (
+            f"Nutzer(id={self.id}, version={self.version}, "
+            + f"vorname={self.vorname}, nachname={self.nachname}, "
+            + f"email={self.email}, username={self.username}, "
+            + f"telefonnummer={self.telefonnummer}, "
+            + f"geburtsdatum={self.geburtsdatum}, "
+            + f"beitrittsdatum={self.beitrittsdatum}, "
+            + f"rolle={self.rolle}, status={self.status}, "
+            + f"interessen_json={self.interessen_json}, "
+            + f"erzeugt={self.erzeugt}, aktualisiert={self.aktualisiert})"
+        )
