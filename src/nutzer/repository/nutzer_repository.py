@@ -42,3 +42,41 @@ class NutzerRepository:
 
         logger.debug("{}", nutzer)
         return nutzer
+
+    def find(
+        self,
+        suchparameter: Mapping[str, str],
+        pageable: Pageable,
+        session: Session,
+    ) -> Slice[Nutzer]:
+        """Suche mit Suchparameter.
+
+        :param suchparameter: Suchparameter als Dictionary
+        :param pageable: Anzahl Datensätze und Seitennummer
+        :param session: Session für SQLAlchemy
+        :return: Tupel der gefundenen Nutzer oder leeres Tupel
+        :rtype: Slice[Nutzer]
+        """
+        log_str: Final = "{}"
+        logger.debug(log_str, suchparameter)
+
+        if not suchparameter:
+            return self._find_all(pageable=pageable, session=session)
+
+        for key, value in suchparameter.items():
+            if key == "email":
+                nutzer = self._find_by_email(email=value, session=session)
+                logger.debug(log_str, nutzer)
+                return (
+                    Slice(content=(nutzer,), total_elements=1)
+                    if nutzer is not None
+                    else Slice(content=(), total_elements=0)
+                )
+            if key == "nachname":
+                nutzer_liste = self._find_by_nachname(
+                    teil=value,
+                    pageable=pageable,
+                    session=session,
+                )
+                logger.debug(log_str, nutzer_liste)
+                return nutzer_liste
