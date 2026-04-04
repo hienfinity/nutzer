@@ -174,3 +174,40 @@ class NutzerRepository:
 
         logger.debug("{}", nutzer)
         return nutzer
+
+    def _find_by_nachname(
+        self,
+        teil: str,
+        pageable: Pageable,
+        session: Session,
+    ) -> Slice[Nutzer]:
+        logger.debug("teil={}", teil)
+        offset = pageable.number * pageable.size
+
+        statement: Final = (
+            (
+                select(Nutzer)
+                .options(
+                    joinedload(Nutzer.adresse),
+                    joinedload(Nutzer.einstellung),
+                )
+                .filter(Nutzer.nachname.ilike(f"%{teil}%"))
+                .limit(pageable.size)
+                .offset(offset)
+            )
+            if pageable.size != 0
+            else (
+                select(Nutzer)
+                .options(
+                    joinedload(Nutzer.adresse),
+                    joinedload(Nutzer.einstellung),
+                )
+                .filter(Nutzer.nachname.ilike(f"%{teil}%"))
+            )
+        )
+
+        nutzer_liste: Final = session.scalars(statement).all()
+        anzahl: Final = self._count_rows_nachname(teil, session)
+        nutzer_slice: Final = Slice(content=tuple(nutzer_liste), total_elements=anzahl)
+        logger.debug("{}", nutzer_slice)
+        return nutzer_slice
