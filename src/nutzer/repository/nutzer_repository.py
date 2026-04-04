@@ -151,3 +151,26 @@ class NutzerRepository:
 
         logger.debug("{}", nutzer)
         return nutzer
+
+    def _find_by_username(self, username: str, session: Session) -> Nutzer | None:
+        """Einen Nutzer anhand des Benutzernamens suchen.
+
+        :param username: Benutzername
+        :param session: Session für SQLAlchemy
+        :return: Gefundener Nutzer, falls vorhanden, sonst None
+        :rtype: Nutzer | None
+        """
+        logger.debug("username={}", username)
+
+        statement: Final = (
+            select(Nutzer)
+            .options(
+                joinedload(Nutzer.adresse),
+                joinedload(Nutzer.einstellung),
+            )
+            .where(Nutzer.username == username)
+        )
+        nutzer: Final = session.scalar(statement)
+
+        logger.debug("{}", nutzer)
+        return nutzer
