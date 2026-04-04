@@ -294,3 +294,20 @@ class NutzerRepository:
         session.flush(objects=[nutzer])
         logger.debug("nutzer_id={}", nutzer.id)
         return nutzer
+
+
+    def update(self, nutzer: Nutzer, session: Session) -> Nutzer | None:
+        """Aktualisiere einen Nutzer.
+
+        :param nutzer: Die neuen Nutzerdaten
+        :param session: Session für SQLAlchemy
+        :return: Der aktualisierte Nutzer oder None, falls kein Nutzer mit der ID existiert
+        :rtype: Nutzer | None
+        """
+        logger.debug("{}", nutzer)
+
+        if (nutzer_db := self.find_by_id(nutzer_id=nutzer.id, session=session)) is None:
+            return None
+
+        logger.debug("{}", nutzer_db)
+        return nutzer_db
