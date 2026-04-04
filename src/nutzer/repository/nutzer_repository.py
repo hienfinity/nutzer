@@ -257,3 +257,20 @@ class NutzerRepository:
         logger.debug("id_db={}", id_db)
         return id_db is not None and id_db != nutzer_id
 
+    def exists_username(self, username: str | None, session: Session) -> bool:
+        """Abfrage, ob es den Benutzernamen bereits gibt.
+
+        :param username: Benutzername
+        :param session: Session für SQLAlchemy
+        :return: True, falls es den Benutzernamen bereits gibt
+        :rtype: bool
+        """
+        logger.debug("username={}", username)
+
+        if username is None:
+            return False
+
+        statement: Final = select(Nutzer.username).filter_by(username=username)
+        username_db: Final = session.scalar(statement)
+        logger.debug("username_db={}", username_db)
+        return username_db is not None
