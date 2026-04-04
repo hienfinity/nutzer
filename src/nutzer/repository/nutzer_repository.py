@@ -311,3 +311,17 @@ class NutzerRepository:
 
         logger.debug("{}", nutzer_db)
         return nutzer_db
+
+    def delete_by_id(self, nutzer_id: int, session: Session) -> None:
+        """Lösche die Daten zu einem Nutzer.
+
+        :param nutzer_id: Die ID des zu löschenden Nutzers
+        :param session: Session für SQLAlchemy
+        """
+        logger.debug("nutzer_id={}", nutzer_id)
+
+        if (nutzer := self.find_by_id(nutzer_id=nutzer_id, session=session)) is None:
+            return
+
+        session.delete(nutzer)
+        logger.debug("ok")
