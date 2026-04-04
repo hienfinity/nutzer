@@ -211,7 +211,7 @@ class NutzerRepository:
         nutzer_slice: Final = Slice(content=tuple(nutzer_liste), total_elements=anzahl)
         logger.debug("{}", nutzer_slice)
         return nutzer_slice
-    
+
     def _count_rows_nachname(self, teil: str, session: Session) -> int:
         statement: Final = (
             select(func.count())
@@ -220,3 +220,18 @@ class NutzerRepository:
         )
         count: Final = session.execute(statement).scalar()
         return count if count is not None else 0
+
+    def exists_email(self, email: str, session: Session) -> bool:
+        """Abfrage, ob es die Emailadresse bereits gibt.
+
+        :param email: Emailadresse
+        :param session: Session für SQLAlchemy
+        :return: True, falls es die Emailadresse bereits gibt, False sonst
+        :rtype: bool
+        """
+        logger.debug("email={}", email)
+
+        statement: Final = select(func.count()).where(Nutzer.email == email)
+        anzahl: Final = session.scalar(statement)
+        logger.debug("anzahl={}", anzahl)
+        return anzahl is not None and anzahl > 0
