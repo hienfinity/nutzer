@@ -123,3 +123,9 @@ class NutzerRepository:
         nutzer_slice: Final = Slice(content=tuple(nutzer_liste), total_elements=anzahl)
         logger.debug("nutzer_slice={}", nutzer_slice)
         return nutzer_slice
+
+    def _count_all_rows(self, session: Session) -> int:
+        statement: Final = select(func.count()).select_from(Nutzer)
+        count: Final = session.execute(statement).scalar()
+        return count if count is not None else 0
+
