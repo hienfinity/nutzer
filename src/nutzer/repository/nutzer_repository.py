@@ -345,4 +345,3 @@ class NutzerRepository:
 
         logger.debug("nachnamen={}", nachnamen)
         return nachnamen
-
