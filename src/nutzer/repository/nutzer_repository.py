@@ -129,3 +129,25 @@ class NutzerRepository:
         count: Final = session.execute(statement).scalar()
         return count if count is not None else 0
 
+    def _find_by_email(self, email: str, session: Session) -> Nutzer | None:
+        """Einen Nutzer anhand der Emailadresse suchen.
+
+        :param email: Emailadresse
+        :param session: Session für SQLAlchemy
+        :return: Gefundener Nutzer, falls vorhanden, sonst None
+        :rtype: Nutzer | None
+        """
+        logger.debug("email={}", email)
+
+        statement: Final = (
+            select(Nutzer)
+            .options(
+                joinedload(Nutzer.adresse),
+                joinedload(Nutzer.einstellung),
+            )
+            .where(Nutzer.email == email)
+        )
+        nutzer: Final = session.scalar(statement)
+
+        logger.debug("{}", nutzer)
+        return nutzer
