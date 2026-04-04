@@ -235,3 +235,25 @@ class NutzerRepository:
         anzahl: Final = session.scalar(statement)
         logger.debug("anzahl={}", anzahl)
         return anzahl is not None and anzahl > 0
+
+    def exists_email_other_id(
+        self,
+        email: str,
+        nutzer_id: int,
+        session: Session,
+    ) -> bool:
+        """Abfrage, ob es die Emailadresse bei einer anderen Nutzer-ID bereits gibt.
+
+        :param email: Emailadresse
+        :param nutzer_id: eigene Nutzer-ID
+        :param session: Session für SQLAlchemy
+        :return: True, falls es die Emailadresse bereits gibt, False sonst
+        :rtype: bool
+        """
+        logger.debug("email={}", email)
+
+        statement: Final = select(Nutzer.id).where(Nutzer.email == email)
+        id_db: Final = session.scalar(statement)
+        logger.debug("id_db={}", id_db)
+        return id_db is not None and id_db != nutzer_id
+
