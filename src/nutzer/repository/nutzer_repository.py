@@ -80,3 +80,13 @@ class NutzerRepository:
                 )
                 logger.debug(log_str, nutzer_liste)
                 return nutzer_liste
+            if key == "username":
+                nutzer = self._find_by_username(username=value, session=session)
+                logger.debug(log_str, nutzer)
+                return (
+                    Slice(content=(nutzer,), total_elements=1)
+                    if nutzer is not None
+                    else Slice(content=(), total_elements=0)
+                )
+
+        return Slice(content=(), total_elements=0)
