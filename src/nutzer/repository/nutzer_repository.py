@@ -90,3 +90,36 @@ class NutzerRepository:
                 )
 
         return Slice(content=(), total_elements=0)
+
+    def _find_all(self, pageable: Pageable, session: Session) -> Slice[Nutzer]:
+        """Alle Nutzer mit Pagination suchen.
+
+        :param pageable: Anzahl Datensätze und Seitennummer
+        :param session: Session für SQLAlchemy
+        :return: Seite mit Nutzern
+        :rtype: Slice[Nutzer]
+        """
+        logger.debug("aufgerufen")
+        offset = pageable.number * pageable.size
+
+        if pageable.size != 0:
+            statement: Final = (
+                select(Nutzer)
+                .options(
+                    joinedload(Nutzer.adresse),
+                    joinedload(Nutzer.einstellung),
+                )
+                .limit(pageable.size)
+                .offset(offset)
+            )
+        else:
+            statement: Final = select(Nutzer).options(
+                joinedload(Nutzer.adresse),
+                joinedload(Nutzer.einstellung),
+            )
+
+        nutzer_liste: Final = session.scalars(statement).all()
+        anzahl: Final = self._count_all_rows(session)
+        nutzer_slice: Final = Slice(content=tuple(nutzer_liste), total_elements=anzahl)
+        logger.debug("nutzer_slice={}", nutzer_slice)
+        return nutzer_slice
