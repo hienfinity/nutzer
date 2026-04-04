@@ -211,3 +211,12 @@ class NutzerRepository:
         nutzer_slice: Final = Slice(content=tuple(nutzer_liste), total_elements=anzahl)
         logger.debug("{}", nutzer_slice)
         return nutzer_slice
+    
+    def _count_rows_nachname(self, teil: str, session: Session) -> int:
+        statement: Final = (
+            select(func.count())
+            .select_from(Nutzer)
+            .filter(Nutzer.nachname.ilike(f"%{teil}%"))
+        )
+        count: Final = session.execute(statement).scalar()
+        return count if count is not None else 0
