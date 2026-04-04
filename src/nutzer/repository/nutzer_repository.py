@@ -274,3 +274,23 @@ class NutzerRepository:
         username_db: Final = session.scalar(statement)
         logger.debug("username_db={}", username_db)
         return username_db is not None
+
+    def create(self, nutzer: Nutzer, session: Session) -> Nutzer:
+        """Speichere einen neuen Nutzer ab.
+
+        :param nutzer: Die Daten des neuen Nutzers ohne ID
+        :param session: Session für SQLAlchemy
+        :return: Der neu angelegte Nutzer mit generierter ID
+        :rtype: Nutzer
+        """
+        logger.debug(
+            "nutzer={}, nutzer.adresse={}, nutzer.einstellung={}",
+            nutzer,
+            nutzer.adresse,
+            nutzer.einstellung,
+        )
+
+        session.add(instance=nutzer)
+        session.flush(objects=[nutzer])
+        logger.debug("nutzer_id={}", nutzer.id)
+        return nutzer
