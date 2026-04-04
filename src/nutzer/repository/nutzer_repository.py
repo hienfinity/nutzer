@@ -325,3 +325,24 @@ class NutzerRepository:
 
         session.delete(nutzer)
         logger.debug("ok")
+
+    def find_nachnamen(self, teil: str, session: Session) -> Sequence[str]:
+        """Suche Nachnamen zu einem Teilstring.
+
+        :param teil: Teilstring zu den gesuchten Nachnamen
+        :param session: Session für SQLAlchemy
+        :return: Liste der gefundenen Nachnamen oder eine leere Liste
+        :rtype: Sequence[str]
+        """
+        logger.debug("teil={}", teil)
+
+        statement: Final = (
+            select(Nutzer.nachname)
+            .filter(Nutzer.nachname.ilike(f"%{teil}%"))
+            .distinct()
+        )
+        nachnamen: Final = session.scalars(statement).all()
+
+        logger.debug("nachnamen={}", nachnamen)
+        return nachnamen
+
