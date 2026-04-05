@@ -1,9 +1,16 @@
 """Modul fuer die Geschaeftslogik von Nutzer."""
 
+from nutzer.service.adresse_dto import AdresseDTO
+from nutzer.service.einstellung_dto import EinstellungDTO
 from nutzer.service.exceptions import NotFoundError
+from nutzer.service.nutzer_dto import NutzerDTO
 from nutzer.service.nutzer_service import NutzerService
 
 # https://docs.python.org/3/tutorial/modules.html#importing-from-a-package
-# Weitere Exporte wie NutzerDTO oder NutzerWriteService kommen dazu,
-# sobald die zugehoerigen Dateien im Paket existieren.
-__all__ = ["NotFoundError", "NutzerService"]
+__all__ = [
+    "AdresseDTO",
+    "EinstellungDTO",
+    "NotFoundError",
+    "NutzerDTO",
+    "NutzerService",
+]
