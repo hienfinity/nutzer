@@ -5,9 +5,9 @@ from typing import Final
 
 from loguru import logger
 
-from nutzer.entity import Nutzer
 from nutzer.repository import NutzerRepository, Pageable, Session, Slice
 from nutzer.service.exceptions import NotFoundError
+from nutzer.service.nutzer_dto import NutzerDTO
 
 __all__ = ["NutzerService"]
 
@@ -19,7 +19,7 @@ class NutzerService:
         """Konstruktor mit abhaengigem NutzerRepository."""
         self.repo: NutzerRepository = repo
 
-    def find_by_id(self, nutzer_id: int) -> Nutzer:
+    def find_by_id(self, nutzer_id: int) -> NutzerDTO:
         """Einen Nutzer ueber seine ID suchen."""
         logger.debug("nutzer_id={}", nutzer_id)
 
@@ -28,16 +28,17 @@ class NutzerService:
             if nutzer is None:
                 logger.debug("NotFoundError fuer nutzer_id={}", nutzer_id)
                 raise NotFoundError(nutzer_id=nutzer_id)
+            nutzer_dto: Final = NutzerDTO(nutzer)
             session.commit()
 
-        logger.debug("{}", nutzer)
-        return nutzer
+        logger.debug("{}", nutzer_dto)
+        return nutzer_dto
 
     def find(
         self,
         suchparameter: Mapping[str, str],
         pageable: Pageable,
-    ) -> Slice[Nutzer]:
+    ) -> Slice[NutzerDTO]:
         """Nutzer mit Suchparametern suchen."""
         logger.debug("{}", suchparameter)
 
@@ -49,7 +50,12 @@ class NutzerService:
             )
             if len(nutzer_slice.content) == 0:
                 raise NotFoundError()
+            nutzer_dto = tuple(NutzerDTO(nutzer) for nutzer in nutzer_slice.content)
             session.commit()
 
-        logger.debug("{}", nutzer_slice)
-        return nutzer_slice
+        nutzer_dto_slice = Slice(
+            content=nutzer_dto,
+            total_elements=nutzer_slice.total_elements,
+        )
+        logger.debug("{}", nutzer_dto_slice)
+        return nutzer_dto_slice
