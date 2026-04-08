@@ -17,3 +17,7 @@ from nutzer.service.nutzer_dto import NutzerDTO
 __all__ = ["NutzerWriteService"]
 class NutzerWriteService:
     """Service-Klasse mit Geschaeftslogik fuer Nutzer."""
+
+    def __init__(self, repo: NutzerRepository) -> None:
+        """Konstruktor mit abhaengigem NutzerRepository."""
+        self.repo: NutzerRepository = repo
