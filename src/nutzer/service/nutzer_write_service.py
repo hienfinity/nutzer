@@ -15,3 +15,5 @@ from nutzer.service.exceptions import (
 from nutzer.service.nutzer_dto import NutzerDTO
 
 __all__ = ["NutzerWriteService"]
+class NutzerWriteService:
+    """Service-Klasse mit Geschaeftslogik fuer Nutzer."""
