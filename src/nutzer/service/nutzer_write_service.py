@@ -53,3 +53,62 @@ class NutzerWriteService:
 
         logger.debug("nutzer_dto={}", nutzer_dto)
         return nutzer_dto
+
+    def update(self, nutzer: Nutzer, nutzer_id: int, version: int) -> NutzerDTO:
+        """Daten eines Nutzers aendern.
+
+        :param nutzer: Die neuen Daten
+        :param nutzer_id: ID des zu aktualisierenden Nutzers
+        :param version: Version fuer optimistische Synchronisation
+        :return: Der aktualisierte Nutzer
+        :rtype: NutzerDTO
+        :raises NotFoundError: Falls der zu aktualisierende Nutzer nicht existiert
+        :raises VersionOutdatedError: Falls die Versionsnummer nicht aktuell ist
+        :raises EmailExistsError: Falls die Emailadresse bereits existiert
+        :raises UsernameExistsError: Falls der Benutzername bereits existiert
+        """
+        logger.debug("nutzer_id={}, version={}, {}", nutzer_id, version, nutzer)
+
+        with Session() as session:
+            if (
+                nutzer_db := self.repo.find_by_id(
+                    nutzer_id=nutzer_id,
+                    session=session,
+                )
+            ) is None:
+                raise NotFoundError(nutzer_id)
+
+            if nutzer_db.version > version:
+                raise VersionOutdatedError(version)
+
+            email: Final = nutzer.email
+            if email != nutzer_db.email and self.repo.exists_email_other_id(
+                nutzer_id=nutzer_id,
+                email=email,
+                session=session,
+            ):
+                raise EmailExistsError(email)
+
+            username: Final = nutzer.username
+            if username != nutzer_db.username and self.repo.exists_username(
+                username=username,
+                session=session,
+            ):
+                raise UsernameExistsError(username)
+
+            nutzer_db.set(nutzer)
+            if (
+                nutzer_updated := self.repo.update(
+                    nutzer=nutzer_db,
+                    session=session,
+                )
+            ) is None:
+                raise NotFoundError(nutzer_id)
+
+            nutzer_dto: Final = NutzerDTO(nutzer_updated)
+            logger.debug("{}", nutzer_dto)
+
+            session.commit()
+            nutzer_dto.version += 1
+            return nutzer_dto
+
