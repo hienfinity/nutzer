@@ -112,3 +112,13 @@ class NutzerWriteService:
             nutzer_dto.version += 1
             return nutzer_dto
 
+    def delete_by_id(self, nutzer_id: int) -> None:
+        """Einen Nutzer anhand seiner ID loeschen.
+
+        :param nutzer_id: ID des zu loeschenden Nutzers
+        """
+        logger.debug("nutzer_id={}", nutzer_id)
+
+        with Session() as session:
+            self.repo.delete_by_id(nutzer_id=nutzer_id, session=session)
+            session.commit()
