@@ -5,6 +5,8 @@ from typing import Annotated
 from fastapi import Depends
 
 from nutzer.repository.nutzer_repository import NutzerRepository
+from nutzer.security.dependencies import get_user_service
+from nutzer.security.user_service import UserService
 from nutzer.service.nutzer_service import NutzerService
 from nutzer.service.nutzer_write_service import NutzerWriteService
 
