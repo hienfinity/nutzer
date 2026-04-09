@@ -6,6 +6,7 @@ from loguru import logger
 
 from nutzer.entity import Nutzer
 from nutzer.repository import NutzerRepository, Session
+from nutzer.security.user_service import UserService
 from nutzer.service.exceptions import (
     EmailExistsError,
     NotFoundError,
@@ -18,9 +19,10 @@ __all__ = ["NutzerWriteService"]
 class NutzerWriteService:
     """Service-Klasse mit Geschaeftslogik fuer Nutzer."""
 
-    def __init__(self, repo: NutzerRepository) -> None:
+    def __init__(self, repo: NutzerRepository, user_service: UserService) -> None:
         """Konstruktor mit abhaengigem NutzerRepository."""
         self.repo: NutzerRepository = repo
+        self.user_service: UserService = user_service
 
     def create(self, nutzer: Nutzer) -> NutzerDTO:
         """Einen neuen Nutzer anlegen.
