@@ -19,3 +19,10 @@ def get_repository() -> NutzerRepository:
     :rtype: NutzerRepository
     """
     return NutzerRepository()
+
+def get_service(
+    repo: Annotated[NutzerRepository, Depends(get_repository)],
+) -> NutzerService:
+    """Factory-Funktion fuer NutzerService."""
+    return NutzerService(repo=repo)
+
