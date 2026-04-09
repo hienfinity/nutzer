@@ -22,3 +22,11 @@ class EmailExistsError(Exception):
         """Initialisierung mit der existierenden Emailadresse."""
         super().__init__("Email already exists")
         self.email = email
+
+class UsernameExistsError(Exception):
+    """Exception, falls der Benutzername bereits existiert."""
+
+    def __init__(self, username: str) -> None:
+        """Initialisierung mit dem existierenden Benutzernamen."""
+        super().__init__("Username already exists")
+        self.username = username
