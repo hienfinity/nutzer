@@ -11,3 +11,11 @@ from nutzer.service.nutzer_service import NutzerService
 from nutzer.service.nutzer_write_service import NutzerWriteService
 
 __all__ = ["get_repository", "get_service", "get_write_service"]
+
+def get_repository() -> NutzerRepository:
+    """Factory-Funktion fuer NutzerRepository.
+
+    :return: Das Repository
+    :rtype: NutzerRepository
+    """
+    return NutzerRepository()
