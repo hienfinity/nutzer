@@ -26,3 +26,9 @@ def get_service(
     """Factory-Funktion fuer NutzerService."""
     return NutzerService(repo=repo)
 
+def get_write_service(
+    repo: Annotated[NutzerRepository, Depends(get_repository)],
+    user_service: Annotated[UserService, Depends(get_user_service)],
+) -> NutzerWriteService:
+    """Factory-Funktion fuer NutzerWriteService."""
+    return NutzerWriteService(repo=repo, user_service=user_service)
