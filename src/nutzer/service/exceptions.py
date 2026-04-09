@@ -30,3 +30,11 @@ class UsernameExistsError(Exception):
         """Initialisierung mit dem existierenden Benutzernamen."""
         super().__init__("Username already exists")
         self.username = username
+
+class VersionOutdatedError(Exception):
+    """Exception, falls die Versionsnummer nicht aktuell ist."""
+
+    def __init__(self, version: int) -> None:
+        """Initialisierung mit der veralteten Versionsnummer."""
+        super().__init__("Version outdated")
+        self.version = version
