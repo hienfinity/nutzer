@@ -109,3 +109,22 @@ def put(
         status_code=status.HTTP_204_NO_CONTENT,
         headers={ETAG: f'"{nutzer_modified.version}"'},
     )
+
+@nutzer_write_router.delete(
+    "/{nutzer_id}",
+    # dependencies=[Depends(RolesRequired([Role.ADMIN, Role.NUTZER]))],
+)
+def delete_by_id(
+    nutzer_id: int,
+    service: Annotated[NutzerWriteService, Depends(get_write_service)],
+) -> Response:
+    """DELETE-Request, um einen Nutzer anhand seiner ID zu loeschen.
+
+    :param nutzer_id: ID des zu loeschenden Nutzers
+    :param service: Injizierter Service fuer Geschaeftslogik
+    :return: Response mit Statuscode 204
+    :rtype: Response
+    """
+    logger.debug("nutzer_id={}", nutzer_id)
+    service.delete_by_id(nutzer_id=nutzer_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
