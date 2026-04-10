@@ -16,3 +16,52 @@ from nutzer.security import Role, RolesRequired, User
 from nutzer.service import NutzerDTO, NutzerService
 
 __all__ = ["nutzer_router"]
+
+nutzer_router: Final = APIRouter(tags=["Lesen"])
+
+
+@nutzer_router.get(
+    "/{nutzer_id}",
+    dependencies=[Depends(RolesRequired([Role.ADMIN, Role.NUTZER]))],
+)
+def get_by_id(
+    nutzer_id: int,
+    request: Request,
+    service: Annotated[NutzerService, Depends(get_service)],
+) -> Response:
+    """Suche mit der Nutzer-ID.
+
+    :param nutzer_id: ID des gesuchten Nutzers als Pfadparameter
+    :param request: Injiziertes Request-Objekt von FastAPI bzw. Starlette
+        mit ggf. If-None-Match im Header
+    :param service: Injizierter Service fuer Geschaeftslogik
+    :return: Response mit dem gefundenen Nutzerdatensatz
+    :rtype: Response
+    :raises NotFoundError: Falls kein Nutzer gefunden wurde
+    """
+    user: Final[User] = request.state.current_user
+    logger.debug("nutzer_id={}, user={}", nutzer_id, user)
+
+    nutzer: Final = service.find_by_id(nutzer_id=nutzer_id)
+    logger.debug("{}", nutzer)
+
+    if_none_match: Final = request.headers.get(IF_NONE_MATCH)
+    if (
+        if_none_match is not None
+        and len(if_none_match) >= IF_NONE_MATCH_MIN_LEN
+        and if_none_match.startswith('"')
+        and if_none_match.endswith('"')
+    ):
+        version = if_none_match[1:-1]
+        logger.debug("version={}", version)
+        if version is not None:
+            try:
+                if int(version) == nutzer.version:
+                    return Response(status_code=status.HTTP_304_NOT_MODIFIED)
+            except ValueError:
+                logger.debug("invalid version={}", version)
+
+    return JSONResponse(
+        content=_nutzer_to_dict(nutzer),
+        headers={ETAG: f'"{nutzer.version}"'},
+    )
