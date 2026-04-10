@@ -132,3 +132,16 @@ def _nutzer_slice_to_page(
         total_elements=nutzer_slice.total_elements,
     )
     return asdict(obj=page)
+
+def _nutzer_to_dict(nutzer: NutzerDTO) -> dict[str, Any]:
+    nutzer_dict: Final = asdict(obj=nutzer)
+    nutzer_dict.pop("version")
+    nutzer_dict.update({"geburtsdatum": nutzer.geburtsdatum.isoformat()})
+    nutzer_dict.update({"beitrittsdatum": nutzer.beitrittsdatum.isoformat()})
+
+    if nutzer.erzeugt is not None:
+        nutzer_dict.update({"erzeugt": nutzer.erzeugt.isoformat()})
+    if nutzer.aktualisiert is not None:
+        nutzer_dict.update({"aktualisiert": nutzer.aktualisiert.isoformat()})
+
+    return nutzer_dict
