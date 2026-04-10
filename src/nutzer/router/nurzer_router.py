@@ -65,3 +65,40 @@ def get_by_id(
         content=_nutzer_to_dict(nutzer),
         headers={ETAG: f'"{nutzer.version}"'},
     )
+
+@nutzer_router.get(
+    "",
+    dependencies=[Depends(RolesRequired(Role.ADMIN))],
+)
+def get(
+    request: Request,
+    service: Annotated[NutzerService, Depends(get_service)],
+) -> JSONResponse:
+    """Suche mit Query-Parametern.
+
+    :param request: Injiziertes Request-Objekt von FastAPI bzw. Starlette
+        mit Query-Parametern
+    :param service: Injizierter Service fuer Geschaeftslogik
+    :return: Response mit einer Seite mit Nutzerdaten
+    :rtype: Response
+    :raises NotFoundError: Falls keine Nutzer gefunden wurden
+    """
+    query_params: Final = request.query_params
+    log_str: Final = "{}"
+    logger.debug(log_str, query_params)
+
+    page: Final = query_params.get("page")
+    size: Final = query_params.get("size")
+    pageable: Final = Pageable.create(number=page, size=size)
+
+    suchparameter = dict(query_params)
+    if "page" in query_params:
+        del suchparameter["page"]
+    if "size" in query_params:
+        del suchparameter["size"]
+
+    nutzer_slice: Final = service.find(suchparameter=suchparameter, pageable=pageable)
+
+    result: Final = _nutzer_slice_to_page(nutzer_slice, pageable)
+    logger.debug(log_str, result)
+    return JSONResponse(content=result)
