@@ -11,7 +11,7 @@ from nutzer.entity import Rolle, Status, Nutzer
 __all__ = ["NutzerUpdateModel"]
 
 class NutzerUpdateModel(BaseModel):
-"""Pydantic-Model zum Aktualisieren von Nutzerdaten."""
+    """Pydantic-Model zum Aktualisieren von Nutzerdaten."""
 
     vorname: Annotated[
         str,
@@ -61,4 +61,23 @@ class NutzerUpdateModel(BaseModel):
             },
         },
     )
+
+    def to_dict(self) -> dict[str, Any]:
+        """Konvertierung der primitiven Attribute in ein Dictionary.
+
+        :return: Dictionary mit den primitiven Nutzer-Attributen
+        :rtype: dict[str, Any]
+        """
+        nutzer_dict = self.model_dump()
+
+        # Felder setzen, die nicht aus dem Update kommen
+        nutzer_dict["id"] = None
+        nutzer_dict["adresse"] = None
+        nutzer_dict["einstellung"] = None
+        nutzer_dict["interessen"] = []
+        nutzer_dict["username"] = None
+        nutzer_dict["erzeugt"] = None
+        nutzer_dict["aktualisiert"] = None
+
+        return nutzer_dict
 
