@@ -81,3 +81,16 @@ class NutzerUpdateModel(BaseModel):
 
         return nutzer_dict
 
+    def to_nutzer(self) -> Nutzer:
+        """Konvertierung in ein Nutzer-Objekt fuer SQLAlchemy.
+
+        :return: Nutzer-Objekt fuer SQLAlchemy
+        :rtype: Nutzer
+        """
+        logger.debug("self={}", self)
+
+        nutzer_dict = self.to_dict()
+        nutzer = Nutzer(**nutzer_dict)
+
+        logger.debug("nutzer={}", nutzer)
+        return nutzer
