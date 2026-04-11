@@ -122,3 +122,17 @@ def get_nachnamen(
     logger.debug("teil={}", teil)
     nachnamen: Final = service.find_nachnamen(teil=teil)
     return JSONResponse(content=nachnamen)
+
+def _nutzer_slice_to_page(
+    nutzer_slice: Slice[NutzerDTO],
+    pageable: Pageable,
+) -> dict[str, Any]:
+    nutzer_dict: Final = tuple(
+        _nutzer_to_dict(nutzer) for nutzer in nutzer_slice.content
+    )
+    page: Final = Page.create(
+        content=nutzer_dict,
+        pageable=pageable,
+        total_elements=nutzer_slice.total_elements,
+    )
+    return asdict(obj=page)
