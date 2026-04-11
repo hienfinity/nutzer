@@ -59,3 +59,18 @@ class NutzerService:
         )
         logger.debug("{}", nutzer_dto_slice)
         return nutzer_dto_slice
+
+    def find_nachnamen(self, teil: str) -> tuple[str, ...]:
+        """Nachnamen zu einem Teilstring suchen."""
+        logger.debug("teil={}", teil)
+
+        with Session() as session:
+            nachnamen: Final = self.repo.find_nachnamen(teil=teil, session=session)
+            if len(nachnamen) == 0:
+                logger.debug("NotFoundError fuer teil={}", teil)
+                raise NotFoundError()
+            session.commit()
+
+        nachnamen_tuple: Final = tuple(nachnamen)
+        logger.debug("nachnamen={}", nachnamen_tuple)
+        return nachnamen_tuple
