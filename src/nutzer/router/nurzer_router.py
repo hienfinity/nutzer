@@ -102,3 +102,23 @@ def get(
     result: Final = _nutzer_slice_to_page(nutzer_slice, pageable)
     logger.debug(log_str, result)
     return JSONResponse(content=result)
+
+@nutzer_router.get(
+    "/nachnamen/{teil}",
+    dependencies=[Depends(RolesRequired(Role.ADMIN))],
+)
+def get_nachnamen(
+    teil: str,
+    service: Annotated[NutzerService, Depends(get_service)],
+) -> JSONResponse:
+    """Suche Nachnamen zum gegebenen Teilstring.
+
+    :param teil: Teilstring der gefundenen Nachnamen
+    :param service: Injizierter Service fuer Geschaeftslogik
+    :return: Response mit Statuscode 200 und gefundenen Nachnamen im Body
+    :rtype: Response
+    :raises NotFoundError: Falls keine Nachnamen gefunden wurden
+    """
+    logger.debug("teil={}", teil)
+    nachnamen: Final = service.find_nachnamen(teil=teil)
+    return JSONResponse(content=nachnamen)
