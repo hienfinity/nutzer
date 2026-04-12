@@ -1,4 +1,4 @@
-"""NutzerGetRouter."""
+"""NutzerRouter."""
 
 from dataclasses import asdict
 from typing import Annotated, Any, Final
