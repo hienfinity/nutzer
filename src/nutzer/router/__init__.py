@@ -1,27 +1,35 @@
-"""
-Router module for nutzer application.
+"""Router-Paket fuer die REST-Schnittstelle von Nutzer."""
 
-This module contains all API route handlers and related models for user management.
-"""
-
-from .adresse_model import Adresse
-from .constants import *
-from .dependencies import *
-from .einstellung_model import Einstellung
-from .nurzer_router import router as nurzer_router
-from .nutzer_get_router import router as nutzer_get_router
-from .nutzer_model import Nutzer
-from .nutzer_update_model import NutzerUpdate
-from .nutzer_write_router import router as nutzer_write_router
+from .adresse_model import AdresseModel
+from .constants import (
+    ETAG,
+    IF_MATCH,
+    IF_MATCH_MIN_LEN,
+    IF_NONE_MATCH,
+    IF_NONE_MATCH_MIN_LEN,
+)
+from .dependencies import get_repository, get_service, get_write_service
+from .einstellung_model import EinstellungModel
+from .nutzer_model import NutzerModel
+from .nutzer_router import nutzer_router
+from .nutzer_update_model import NutzerUpdateModel
+from .nutzer_write_router import nutzer_write_router
 from .page import Page
 
 __all__ = [
-    "Adresse",
-    "Einstellung",
-    "Nutzer",
-    "NutzerUpdate",
+    "AdresseModel",
+    "ETAG",
+    "EinstellungModel",
+    "IF_MATCH",
+    "IF_MATCH_MIN_LEN",
+    "IF_NONE_MATCH",
+    "IF_NONE_MATCH_MIN_LEN",
+    "NutzerModel",
+    "NutzerUpdateModel",
     "Page",
-    "nurzer_router",
-    "nutzer_get_router",
+    "get_repository",
+    "get_service",
+    "get_write_service",
+    "nutzer_router",
     "nutzer_write_router",
 ]
