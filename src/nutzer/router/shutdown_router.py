@@ -22,8 +22,8 @@ from typing import Any, Final
 from fastapi import APIRouter, Depends
 from loguru import logger
 
-from patient.security.role import Role
-from patient.security.roles_required import RolesRequired
+from nutzer.security.role import Role
+from nutzer.security.roles_required import RolesRequired
 
 __all__ = ["router"]
 
