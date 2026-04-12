@@ -7,16 +7,17 @@ from fastapi import APIRouter, Depends, Request, Response, status
 from fastapi.responses import JSONResponse
 from loguru import logger
 
-from nutzer.repository import Pageable
-from nutzer.repository.slice import Slice
+from nutzer.repository import Pageable, Slice
 from nutzer.router.constants import ETAG, IF_NONE_MATCH, IF_NONE_MATCH_MIN_LEN
 from nutzer.router.dependencies import get_service
 from nutzer.router.page import Page
 from nutzer.security import Role, RolesRequired, User
-from nutzer.service.nutzer_dto import NutzerDTO
-from nutzer.service.nutzer_service import NutzerService
+from nutzer.service import NutzerDTO, NutzerService
 
 __all__ = ["nutzer_router"]
+
+
+nutzer_router: Final = APIRouter(tags=["Lesen"])
 
 @nutzer_router.get(
     "/{nutzer_id}",
