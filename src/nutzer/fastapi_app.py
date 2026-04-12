@@ -11,6 +11,9 @@ from prometheus_fastapi_instrumentator import Instrumentator
 
 from nutzer.config import config_logger
 from nutzer.problem_details import create_problem_details
+from nutzer.router.nutzer_router import nutzer_router
+from nutzer.router.nutzer_write_router import nutzer_write_router
+from nutzer.router.shutdown_router import router as shutdown_router
 from nutzer.security import AuthorizationError, LoginError, router as auth_router
 from nutzer.security import set_response_headers
 
@@ -34,7 +37,10 @@ app: Final = FastAPI(
 
 Instrumentator().instrument(app).expose(app)
 app.add_middleware(GZipMiddleware, minimum_size=500)
+app.include_router(nutzer_router, prefix="/rest")
+app.include_router(nutzer_write_router, prefix="/rest")
 app.include_router(auth_router, prefix="/auth")
+app.include_router(shutdown_router, prefix="/admin")
 
 
 @app.get("/")
