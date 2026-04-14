@@ -75,5 +75,5 @@ class LoginResult:
     """Rueckgabetyp fuer einen erfolgreichen Login."""
 
     token: str
-    expires_in: str
+    expiresIn: str  # noqa: N815  # NOSONAR
     roles: list[str]
