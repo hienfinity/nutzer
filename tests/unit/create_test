@@ -63,3 +63,27 @@ def _create_nutzer() -> Nutzer:
     adresse.nutzer = nutzer
     einstellung.nutzer = nutzer
     return nutzer
+
+
+@mark.unit
+@mark.unit_create
+def test_create(nutzer_write_service, session_mock) -> None:
+    # Arrange
+    nutzer = _create_nutzer()
+    generierte_id = 1
+
+    session_mock.add.return_value = None
+    # exists_email(...) -> False, exists_username(...) -> False
+    session_mock.scalar.side_effect = [0, None]
+
+    def flush_side_effect(objects=None):
+        for obj in objects or []:
+            obj.id = generierte_id  # Emulation: generierter PK in session.flush()
+
+    session_mock.flush.side_effect = flush_side_effect
+
+    # Act
+    nutzer_dto = nutzer_write_service.create(nutzer=nutzer)
+
+    # Assert
+    assert nutzer_dto.id == generierte_id
