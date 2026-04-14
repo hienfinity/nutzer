@@ -46,3 +46,11 @@ def user_service(keycloak_admin_mock) -> UserService:
     }
     keycloak_admin_mock.get_client_roles.return_value = [nutzer_rolle_mock]
     return UserService()
+
+
+@fixture
+def nutzer_write_service(
+    nutzer_repository: NutzerRepository, user_service: UserService
+) -> NutzerWriteService:
+    """Fixture fuer NutzerWriteService."""
+    return NutzerWriteService(nutzer_repository, user_service)
