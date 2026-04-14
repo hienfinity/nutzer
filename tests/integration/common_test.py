@@ -257,4 +257,107 @@ class StubWriteService:
         return None
 
 
+class StubTokenService:
+    def token(self, username: str | None, password: str | None) -> Mapping[str, Any]:
+        if (
+            username is None
+            or password is None
+            or (username, password) not in {("admin", "p"), ("alice", "p")}
+        ):
+            raise LoginError(username=username)
 
+        return {
+            "access_token": f"token-{username}",
+            "expires_in": 3600,
+            "resource_access": {
+                "python-client": {
+                    "roles": ["admin"] if username == "admin" else ["nutzer"],
+                }
+            },
+        }
+
+    def get_roles_from_token(self, token: str | Mapping[str, Any]) -> list[Role]:
+        if isinstance(token, str):
+            return [Role.ADMIN] if token == "token-admin" else [Role.NUTZER]
+
+        roles = token["resource_access"]["python-client"]["roles"]
+        return [Role[rolle.upper()] for rolle in roles]
+
+    def get_user_from_request(self, _request: Any) -> User:
+        return User(
+            username="admin",
+            email="admin@example.de",
+            nachname="Admin",
+            vorname="Ada",
+            roles=[Role.ADMIN],
+        )
+
+
+def _to_path(url: str) -> str:
+    return url.removeprefix(base_url)
+
+
+def _request(method: str, url: str, **kwargs: Any) -> Any:
+    kwargs.pop("verify", None)
+    kwargs.pop("timeout", None)
+
+    nutzer = _nutzer_liste()
+    app.dependency_overrides[get_service] = lambda: StubReadService(nutzer)
+    app.dependency_overrides[get_write_service] = lambda: StubWriteService(nutzer)
+    app.dependency_overrides[get_token_service] = lambda: StubTokenService()
+
+    try:
+        with TestClient(app) as client:
+            return client.request(method=method, url=_to_path(url), **kwargs)
+    finally:
+        app.dependency_overrides.clear()
+
+
+def check_readiness() -> None:
+    response: Final = get(health_url, verify=ctx)
+    if response.status_code != 200:
+        raise RuntimeError(f"health mit Statuscode {response.status_code}")
+
+
+def login(
+    username: str = username_admin,
+    password: str = password_admin,  # NOSONAR
+) -> str:
+    login_data: Final = {"username": username, "password": password}
+    response: Final = post(
+        f"{base_url}{token_path}",
+        json=login_data,
+        verify=ctx,
+        timeout=timeout,
+    )
+    if response.status_code != 200:
+        raise RuntimeError(f"login() mit Statuscode {response.status_code}")
+    response_body: Final = response.json()
+    token: Final = response_body.get("token")
+    if token is None or not isinstance(token, str):
+        raise RuntimeError(f"login() mit ungueltigem Token: type={type(token)}")
+    return token
+
+
+def db_populate() -> None:
+    return None
+
+
+def keycloak_populate() -> None:
+    return None
+
+
+def get(url: str, **kwargs: Any) -> Any:
+    return _request("GET", url, **kwargs)
+
+
+def post(url: str, **kwargs: Any) -> Any:
+    return _request("POST", url, **kwargs)
+
+
+def put(url: str, **kwargs: Any) -> Any:
+    return _request("PUT", url, **kwargs)
+
+
+def delete(url: str, **kwargs: Any) -> Any:
+    return _request("DELETE", url, **kwargs)
