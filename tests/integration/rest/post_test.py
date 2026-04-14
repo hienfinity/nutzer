@@ -103,4 +103,48 @@ def test_post_invalid() -> None:
     assert "strasse" in body
 
 
+@mark.rest
+@mark.post_request
+def test_post_email_exists() -> None:
+    # arrange
+    email_exists: Final = "alice@example.de"
+    neuer_nutzer: Final = {
+        "vorname": "Test",
+        "nachname": "Nachnamerest",
+        "email": email_exists,
+        "username": "emailexists",
+        "telefonnummer": "123456",
+        "geburtsdatum": "2022-02-01",
+        "beitrittsdatum": "2024-01-01",
+        "aktiv": True,
+        "rolle": "NUTZER",
+        "status": "AKTIV",
+        "interessen": ["TECHNIK"],
+        "adresse": {
+            "strasse": "Restweg",
+            "hausnummer": "1",
+            "plz": "99999",
+            "ort": "Restort",
+        },
+        "einstellung": {
+            "newsletter_aktiv": True,
+            "benachrichtigungen_aktiv": True,
+            "sprache": "de",
+        },
+    }
+    headers = {"Content-Type": "application/json"}
+
+    # act
+    response: Final = post(
+        rest_url,
+        json=neuer_nutzer,
+        headers=headers,
+        verify=ctx,
+    )
+
+    # assert
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert "Email already exists" in response.text
+
+
 
