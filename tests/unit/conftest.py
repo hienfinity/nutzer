@@ -7,3 +7,9 @@ from pytest_mock import MockerFixture
 from nutzer.repository import NutzerRepository
 from nutzer.security import UserService
 from nutzer.service import NutzerService, NutzerWriteService
+
+
+@fixture()
+def nutzer_repository() -> NutzerRepository:
+    """Fixture fuer NutzerRepository."""
+    return NutzerRepository()
