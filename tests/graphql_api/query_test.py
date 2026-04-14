@@ -8,3 +8,57 @@ from httpx import post
 from pytest import mark
 
 GRAPHQL_PATH: Final = "/graphql"
+
+@mark.graphql
+@mark.query
+def test_query_id() -> None:
+    # arrange
+    token: Final = login_graphql()
+    assert token is not None
+    headers: Final = {"Authorization": f"Bearer {token}"}
+
+    query: Final = {
+        "query": """
+            {
+                nutzer(nutzerId: "20") {
+                    id
+                    version
+                    vorname
+                    nachname
+                    email
+                    username
+                    telefonnummer
+                    geburtsdatum
+                    beitrittsdatum
+                    aktiv
+                    rolle
+                    status
+                    interessen
+                    adresse {
+                        strasse
+                        hausnummer
+                        plz
+                        ort
+                    }
+                    einstellung {
+                        newsletterAktiv
+                        benachrichtigungenAktiv
+                        sprache
+                    }
+                }
+            }
+        """,
+    }
+
+    # act
+    response: Final = post(graphql_url, json=query, headers=headers, verify=ctx)
+
+    # assert
+    assert response.status_code == HTTPStatus.OK
+    response_body: Final = response.json()
+    assert isinstance(response_body, dict)
+    data: Final = response_body["data"]
+    assert data is not None
+    nutzer: Final = data["nutzer"]
+    assert isinstance(nutzer, dict)
+    assert response_body.get("errors") is None
