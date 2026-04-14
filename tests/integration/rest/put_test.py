@@ -137,4 +137,32 @@ def test_put_email_exists() -> None:
     assert "Email already exists" in response.text
 
 
+@mark.rest
+@mark.put_request
+def test_put_ohne_versionsnr() -> None:
+    # arrange
+    nutzer_id: Final = 40
+    geaenderter_nutzer: Final = {
+        "vorname": "Alicia",
+        "nachname": "Testerput",
+        "email": EMAIL_UPDATE,
+        "telefonnummer": "654321",
+        "geburtsdatum": "2022-01-03",
+        "beitrittsdatum": "2024-01-03",
+        "aktiv": False,
+        "rolle": "NUTZER",
+        "status": "AKTIV",
+    }
+
+    # act
+    response: Final = put(
+        f"{rest_url}/{nutzer_id}",
+        json=geaenderter_nutzer,
+        verify=ctx,
+    )
+
+    # assert
+    assert response.status_code == HTTPStatus.PRECONDITION_REQUIRED
+
+
 
