@@ -10,6 +10,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from nutzer.config import config_logger
+from nutzer.graphql_api import graphql_router
 from nutzer.problem_details import create_problem_details
 from nutzer.router.nutzer_router import nutzer_router
 from nutzer.router.nutzer_write_router import nutzer_write_router
@@ -40,7 +41,6 @@ app.add_middleware(GZipMiddleware, minimum_size=500)
 app.include_router(nutzer_router, prefix="/rest")
 app.include_router(nutzer_write_router, prefix="/rest")
 app.include_router(auth_router, prefix="/auth")
-app.include_router(shutdown_router, prefix="/admin")
 
 
 @app.get("/")
