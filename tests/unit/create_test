@@ -87,3 +87,21 @@ def test_create(nutzer_write_service, session_mock) -> None:
 
     # Assert
     assert nutzer_dto.id == generierte_id
+
+
+@mark.unit
+@mark.unit_create
+def test_create_username_exists(nutzer_write_service, session_mock) -> None:
+    # Arrange
+    nutzer = _create_nutzer()
+
+    # exists_email(...) -> False
+    # exists_username(...) -> True
+    session_mock.scalar.side_effect = [0, "mocktest"]
+
+    # Act
+    with raises(UsernameExistsError) as err:
+        nutzer_write_service.create(nutzer=nutzer)
+
+    # Assert
+    assert err.type is UsernameExistsError
