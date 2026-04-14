@@ -10,6 +10,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from nutzer.config import config_logger
+from nutzer.graphql_api import graphql_router
 from nutzer.problem_details import create_problem_details
 from nutzer.security import AuthorizationError, LoginError, router as auth_router
 from nutzer.security import set_response_headers
@@ -35,6 +36,7 @@ app: Final = FastAPI(
 Instrumentator().instrument(app).expose(app)
 app.add_middleware(GZipMiddleware, minimum_size=500)
 app.include_router(auth_router, prefix="/auth")
+app.include_router(graphql_router, prefix="/graphql")
 
 
 @app.get("/")
