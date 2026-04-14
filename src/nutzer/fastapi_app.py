@@ -41,6 +41,8 @@ app.add_middleware(GZipMiddleware, minimum_size=500)
 app.include_router(nutzer_router, prefix="/rest")
 app.include_router(nutzer_write_router, prefix="/rest")
 app.include_router(auth_router, prefix="/auth")
+app.include_router(graphql_router, prefix="/graphql")
+app.include_router(shutdown_router)
 
 
 @app.get("/")
