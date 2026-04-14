@@ -57,3 +57,54 @@ def test_create() -> None:
     assert isinstance(response_body, dict)
     assert isinstance(response_body["data"]["create"]["id"], int)
     assert response_body.get("errors") is None
+
+    @mark.graphql
+@mark.mutation
+def test_create_invalid() -> None:
+    # arrange
+    query: Final = {
+        "query": """
+            mutation {
+                create(
+                    nutzerInput: {
+                        vorname: ""
+                        nachname: ""
+                        email: "falsche_email@"
+                        username: ""
+                        telefonnummer: "123"
+                        geburtsdatum: "2000-01-01"
+                        beitrittsdatum: "2024-01-01"
+                        aktiv: true
+                        rolle: NUTZER
+                        status: AKTIV
+                        interessen: [TECHNIK]
+                        adresse: {
+                            strasse: ""
+                            hausnummer: ""
+                            plz: ""
+                            ort: ""
+                        }
+                        einstellung: {
+                            newsletterAktiv: true
+                            benachrichtigungenAktiv: true
+                            sprache: ""
+                        }
+                    }
+                ) {
+                    id
+                }
+            }
+        """,
+    }
+
+    # act
+    response: Final = post(graphql_url, json=query, verify=ctx)
+
+    # assert
+    assert response.status_code == HTTPStatus.OK
+    response_body: Final = response.json()
+    assert isinstance(response_body, dict)
+    assert response_body["data"] is None
+    errors: Final = response_body["errors"]
+    assert isinstance(errors, list)
+    assert len(errors) == 1
