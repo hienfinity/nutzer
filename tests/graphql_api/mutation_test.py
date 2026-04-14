@@ -58,7 +58,7 @@ def test_create() -> None:
     assert isinstance(response_body["data"]["create"]["id"], int)
     assert response_body.get("errors") is None
 
-    @mark.graphql
+@mark.graphql
 @mark.mutation
 def test_create_invalid() -> None:
     # arrange
