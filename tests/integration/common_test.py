@@ -62,3 +62,53 @@ username_admin: Final = "admin"
 password_admin: Final = "p"  # NOSONAR
 timeout: Final = 2
 ctx = None
+
+
+def _create_nutzer_dto(
+    *,
+    nutzer_id: int,
+    version: int,
+    vorname: str,
+    nachname: str,
+    email: str,
+    username: str,
+) -> NutzerDTO:
+    nutzer = Nutzer(
+        id=nutzer_id,
+        version=version,
+        vorname=vorname,
+        nachname=nachname,
+        email=email,
+        username=username,
+        telefonnummer="+49 721 123456",
+        geburtsdatum=date(1995, 5, 17),
+        beitrittsdatum=date(2024, 4, 1),
+        aktiv=True,
+        rolle=Rolle.NUTZER,
+        status=Status.AKTIV,
+        interessen=[Interesse.TECHNIK, Interesse.MUSIK],
+        adresse=None,
+        einstellung=None,
+        erzeugt=None,
+        aktualisiert=None,
+    )
+    nutzer.adresse = Adresse(
+        id=100 + nutzer_id,
+        nutzer_id=nutzer_id,
+        strasse="Hauptstrasse",
+        hausnummer="1a",
+        plz="76133",
+        ort="Karlsruhe",
+        nutzer=nutzer,
+    )
+    nutzer.einstellung = Einstellung(
+        id=200 + nutzer_id,
+        nutzer_id=nutzer_id,
+        newsletter_aktiv=True,
+        benachrichtigungen_aktiv=True,
+        sprache="de",
+        nutzer=nutzer,
+    )
+    return NutzerDTO(nutzer)
+
+
