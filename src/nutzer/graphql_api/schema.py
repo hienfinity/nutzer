@@ -109,3 +109,31 @@ class Query:
 
         logger.debug("{}", payload)
         return payload
+
+    @strawberry.mutation
+    def login(self, username: str, password: str) -> LoginResult:
+        """Einen Token zu Benutzername und Passwort ermitteln."""
+        logger.debug("username={}, password={}", username, password)
+
+        token_mapping = _token_service.token(username=username, password=password)
+        token = token_mapping["access_token"]
+        user = _token_service.get_user_from_token(token)
+
+        roles: Final = [role.value for role in user.roles]
+        return LoginResult(token=token, expiresIn="1d", roles=roles)
+
+
+schema: Final = strawberry.Schema(query=Query, mutation=Mutation)
+
+Context = dict[str, Request]
+
+def get_context(request: Request) -> Context:
+    """Request von FastAPI an Strawberry weiterreichen."""
+    return {"request": request}
+
+
+graphql_router: Final = GraphQLRouter[Context](
+    schema,
+    context_getter=get_context,
+    graphql_ide=graphql_ide,
+)
