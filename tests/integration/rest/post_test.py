@@ -147,4 +147,20 @@ def test_post_email_exists() -> None:
     assert "Email already exists" in response.text
 
 
+@mark.rest
+@mark.post_request
+def test_post_invalid_json() -> None:
+    # arrange
+    json_invalid: Final = '{"nachname" "Nachname"}'
+    headers = {"Content-Type": "application/json"}
 
+    # act
+    response: Final = post(
+        rest_url,
+        content=json_invalid,
+        headers=headers,
+        verify=ctx,
+    )
+
+    # assert
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
