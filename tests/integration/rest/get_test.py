@@ -62,4 +62,17 @@ def test_get_by_nachname() -> None:
         assert nutzer.get("id") is not None
 
 
+@mark.rest
+@mark.get_request
+def test_get_by_nachname_not_found() -> None:
+    # arrange
+    params = {"nachname": "Nichtvorhanden"}
+
+    # act
+    response: Final = get(rest_url, params=params, verify=ctx)
+
+    # assert
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
 
