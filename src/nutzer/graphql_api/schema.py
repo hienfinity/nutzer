@@ -93,3 +93,19 @@ class Query:
 
         logger.debug("{}", nutzer_dto)
         return nutzer_dto.content
+
+    @strawberry.mutation
+    def create(self, nutzer_input: NutzerInput) -> CreatePayload:
+        """Einen neuen Nutzer anlegen."""
+        logger.debug("nutzer_input={}", nutzer_input)
+
+        nutzer_dict = nutzer_input.__dict__
+        nutzer_dict["adresse"] = nutzer_input.adresse.__dict__
+        nutzer_dict["einstellung"] = nutzer_input.einstellung.__dict__
+
+        nutzer_model: Final = NutzerModel.model_validate(nutzer_dict)
+        nutzer_dto: Final = _write_service.create(nutzer=nutzer_model.to_nutzer())
+        payload: Final = CreatePayload(id=nutzer_dto.id)  # pyright: ignore[reportArgumentType]
+
+        logger.debug("{}", payload)
+        return payload
