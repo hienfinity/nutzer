@@ -2,7 +2,7 @@
 
 from dataclasses import InitVar
 from datetime import date, datetime
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 from loguru import logger
 from sqlalchemy import JSON, Identity, func
@@ -99,7 +99,7 @@ class Nutzer(Base):
     )
     """Der Zeitstempel vom letzten UPDATE in der DB-Tabelle."""
 
-    __mapper_args__ = {"version_id_col": version}
+    __mapper_args__: ClassVar[dict[str, Any]] = {"version_id_col": version}
 
     def __post_init__(
         self,
@@ -151,7 +151,7 @@ class Nutzer(Base):
         self.interessen_json = nutzer.interessen_json
         self.interessen = nutzer.interessen
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Vergleich auf Gleichheit, ohne Joins zu verursachen."""
         if self is other:
             return True
