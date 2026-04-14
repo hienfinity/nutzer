@@ -165,4 +165,34 @@ def test_put_ohne_versionsnr() -> None:
     assert response.status_code == HTTPStatus.PRECONDITION_REQUIRED
 
 
+@mark.rest
+@mark.put_request
+def test_put_alte_versionsnr() -> None:
+    # arrange
+    nutzer_id: Final = 40
+    geaenderter_nutzer: Final = {
+        "vorname": "Alicia",
+        "nachname": "Testerput",
+        "email": EMAIL_UPDATE,
+        "telefonnummer": "654321",
+        "geburtsdatum": "2022-01-03",
+        "beitrittsdatum": "2024-01-03",
+        "aktiv": False,
+        "rolle": "NUTZER",
+        "status": "AKTIV",
+    }
+    headers = {"If-Match": '"-1"'}
+
+    # act
+    response: Final = put(
+        f"{rest_url}/{nutzer_id}",
+        json=geaenderter_nutzer,
+        headers=headers,
+        verify=ctx,
+    )
+
+    # assert
+    assert response.status_code == HTTPStatus.PRECONDITION_FAILED
+
+
 
