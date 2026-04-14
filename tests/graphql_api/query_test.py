@@ -62,3 +62,32 @@ def test_query_id() -> None:
     nutzer: Final = data["nutzer"]
     assert isinstance(nutzer, dict)
     assert response_body.get("errors") is None
+
+
+@mark.graphql
+@mark.query
+def test_query_id_notfound() -> None:
+    # arrange
+    token: Final = login_graphql()
+    assert token is not None
+    headers: Final = {"Authorization": f"Bearer {token}"}
+
+    query: Final = {
+        "query": """
+            {
+                nutzer(nutzerId: "999999") {
+                    nachname
+                }
+            }
+        """,
+    }
+
+    # act
+    response: Final = post(graphql_url, json=query, headers=headers, verify=ctx)
+
+    # assert
+    assert response.status_code == HTTPStatus.OK
+    response_body: Final = response.json()
+    assert isinstance(response_body, dict)
+    assert response_body["data"]["nutzer"] is None
+    assert response_body.get("errors") is None
