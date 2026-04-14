@@ -13,3 +13,9 @@ from nutzer.service import NutzerService, NutzerWriteService
 def nutzer_repository() -> NutzerRepository:
     """Fixture fuer NutzerRepository."""
     return NutzerRepository()
+
+@fixture
+def nutzer_service(nutzer_repository: NutzerRepository) -> NutzerService:
+    """Fixture fuer NutzerService."""
+    return NutzerService(nutzer_repository)
+
