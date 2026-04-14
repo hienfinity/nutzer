@@ -41,4 +41,25 @@ def test_get_by_email_not_found() -> None:
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
+@mark.rest
+@mark.get_request
+def test_get_by_nachname() -> None:
+    # arrange
+    params = {"nachname": "son"}
+
+    # act
+    response: Final = get(rest_url, params=params, verify=ctx)
+
+    # assert
+    assert response.status_code == HTTPStatus.OK
+    response_body: Final = response.json()
+    assert isinstance(response_body, dict)
+    content: Final = response_body["content"]
+    for nutzer in content:
+        nachname = nutzer.get("nachname")
+        assert nachname is not None and isinstance(nachname, str)
+        assert "son" in nachname.lower()
+        assert nutzer.get("id") is not None
+
+
 
