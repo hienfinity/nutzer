@@ -59,3 +59,37 @@ class Query:
 
         logger.debug("{}", nutzer_dto)
         return nutzer_dto
+
+    @strawberry.field
+    def nutzer_liste(
+        self,
+        suchparameter: Suchparameter,
+        info: Info,
+    ) -> Sequence[NutzerDTO]:
+        """Nutzer anhand von Suchparametern suchen."""
+        logger.debug("suchparameter={}", suchparameter)
+
+        request: Final[Request] = info.context["request"]
+        user: Final = _token_service.get_user_from_request(request)
+        if user is None or Role.ADMIN not in user.roles:
+            return []
+
+        suchparameter_dict: Final[dict[str, str | None]] = dict(vars(suchparameter))
+        suchparameter_filtered = {
+            key: value
+            for key, value in suchparameter_dict.items()
+            if value is not None and value
+        }
+        logger.debug("suchparameter_filtered={}", suchparameter_filtered)
+
+        pageable: Final = Pageable.create(size=str(0))
+        try:
+            nutzer_dto: Final = _service.find(
+                suchparameter=suchparameter_filtered,
+                pageable=pageable,
+            )
+        except NotFoundError:
+            return []
+
+        logger.debug("{}", nutzer_dto)
+        return nutzer_dto.content
