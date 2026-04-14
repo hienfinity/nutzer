@@ -157,3 +157,61 @@ def _nutzer_liste() -> tuple[NutzerDTO, ...]:
     )
 
 
+class StubReadService:
+    def __init__(self, nutzer: tuple[NutzerDTO, ...]) -> None:
+        self._nutzer = nutzer
+
+    def find_by_id(self, nutzer_id: int) -> NutzerDTO:
+        for eintrag in self._nutzer:
+            if eintrag.id == nutzer_id:
+                return eintrag
+        raise NotFoundError(nutzer_id=nutzer_id)
+
+    def find(
+        self,
+        suchparameter: Mapping[str, str],
+        pageable: Pageable,
+    ) -> Slice[NutzerDTO]:
+        if not suchparameter:
+            content = self._nutzer
+        elif "email" in suchparameter:
+            content = tuple(
+                eintrag
+                for eintrag in self._nutzer
+                if eintrag.email == suchparameter["email"]
+            )
+        elif "nachname" in suchparameter:
+            teil = suchparameter["nachname"].lower()
+            content = tuple(
+                eintrag
+                for eintrag in self._nutzer
+                if teil in eintrag.nachname.lower()
+            )
+        elif "username" in suchparameter:
+            content = tuple(
+                eintrag
+                for eintrag in self._nutzer
+                if eintrag.username == suchparameter["username"]
+            )
+        else:
+            content = ()
+
+        if len(content) == 0:
+            raise NotFoundError()
+
+        start = pageable.number * pageable.size
+        end = None if pageable.size == 0 else start + pageable.size
+        return Slice(content=content[start:end], total_elements=len(content))
+
+    def find_nachnamen(self, teil: str) -> tuple[str, ...]:
+        nachnamen = tuple(
+            eintrag.nachname
+            for eintrag in self._nutzer
+            if teil.lower() in eintrag.nachname.lower()
+        )
+        if len(nachnamen) == 0:
+            raise NotFoundError()
+        return nachnamen
+
+
+
