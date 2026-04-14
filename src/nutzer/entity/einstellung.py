@@ -34,7 +34,7 @@ class Einstellung(Base):
     nutzer_id: Mapped[int] = mapped_column(ForeignKey("nutzer.id"), unique=True)
     """Die ID des zugehoerigen Nutzers als Fremdschluessel."""
 
-    nutzer: Mapped["Nutzer"] = relationship(back_populates="einstellung")
+    nutzer: Mapped[Nutzer] = relationship(back_populates="einstellung")
     """Das zugehoerige Nutzer-Objekt."""
 
     def __repr__(self) -> str:

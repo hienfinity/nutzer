@@ -18,6 +18,7 @@ report.html
 dependency-check-report.html
 alt/
 notizen/
+hien.md
 
 # Sensible Daten
 .env
