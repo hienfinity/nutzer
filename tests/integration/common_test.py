@@ -112,3 +112,48 @@ def _create_nutzer_dto(
     return NutzerDTO(nutzer)
 
 
+def _nutzer_liste() -> tuple[NutzerDTO, ...]:
+    return (
+        _create_nutzer_dto(
+            nutzer_id=1,
+            version=0,
+            vorname="Ada",
+            nachname="Admin",
+            email="admin@example.de",
+            username="admin",
+        ),
+        _create_nutzer_dto(
+            nutzer_id=20,
+            version=1,
+            vorname="Alice",
+            nachname="Anderson",
+            email="alice@example.de",
+            username="alice",
+        ),
+        _create_nutzer_dto(
+            nutzer_id=30,
+            version=0,
+            vorname="Bob",
+            nachname="Miller",
+            email="bob@example.de",
+            username="bob",
+        ),
+        _create_nutzer_dto(
+            nutzer_id=40,
+            version=0,
+            vorname="Charlie",
+            nachname="Tester",
+            email="charlie@example.de",
+            username="charlie",
+        ),
+        _create_nutzer_dto(
+            nutzer_id=60,
+            version=0,
+            vorname="Delete",
+            nachname="Me",
+            email="delete@example.de",
+            username="deleteme",
+        ),
+    )
+
+
