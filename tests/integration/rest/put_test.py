@@ -41,4 +41,38 @@ def test_put() -> None:
     assert not response.text
 
 
+@mark.rest
+@mark.put_request
+def test_put_invalid() -> None:
+    # arrange
+    nutzer_id: Final = 40
+    geaenderter_nutzer_invalid: Final = {
+        "vorname": "",
+        "nachname": "",
+        "email": "falsche_email_put@",
+        "telefonnummer": "654321",
+        "geburtsdatum": "2022-02-04",
+        "beitrittsdatum": "2024-02-04",
+        "aktiv": False,
+        "rolle": "UNGUELTIG",
+        "status": "AKTIV",
+    }
+    headers = {"If-Match": '"0"'}
+
+    # act
+    response: Final = put(
+        f"{rest_url}/{nutzer_id}",
+        json=geaenderter_nutzer_invalid,
+        headers=headers,
+        verify=ctx,
+    )
+
+    # assert
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert "vorname" in response.text
+    assert "nachname" in response.text
+    assert "email" in response.text
+    assert "rolle" in response.text
+
+
 
