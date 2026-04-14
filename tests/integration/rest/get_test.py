@@ -75,4 +75,22 @@ def test_get_by_nachname_not_found() -> None:
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
+@mark.rest
+@mark.get_request
+def test_get_nachnamen() -> None:
+    # arrange
+    teil: Final = "ll"
+
+    # act
+    response: Final = get(f"{rest_url}/nachnamen/{teil}", verify=ctx)
+
+    # assert
+    assert response.status_code == HTTPStatus.OK
+    nachnamen: Final = response.json()
+    assert isinstance(nachnamen, list)
+    assert len(nachnamen) > 0
+    for nachname in nachnamen:
+        assert teil in nachname.lower()
+
+
 
