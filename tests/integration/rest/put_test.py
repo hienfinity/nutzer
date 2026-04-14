@@ -105,4 +105,36 @@ def test_put_nicht_vorhanden() -> None:
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
+@mark.rest
+@mark.put_request
+def test_put_email_exists() -> None:
+    # arrange
+    nutzer_id: Final = 40
+    email_exists: Final = "alice@example.de"
+    geaenderter_nutzer: Final = {
+        "vorname": "Alicia",
+        "nachname": "Testerput",
+        "email": email_exists,
+        "telefonnummer": "654321",
+        "geburtsdatum": "2022-01-09",
+        "beitrittsdatum": "2024-01-09",
+        "aktiv": False,
+        "rolle": "NUTZER",
+        "status": "AKTIV",
+    }
+    headers = {"If-Match": '"0"'}
+
+    # act
+    response: Final = put(
+        f"{rest_url}/{nutzer_id}",
+        json=geaenderter_nutzer,
+        headers=headers,
+        verify=ctx,
+    )
+
+    # assert
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert "Email already exists" in response.text
+
+
 
