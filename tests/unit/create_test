@@ -24,3 +24,42 @@ def session_mock(mocker: "MockerFixture"):
         ),
     )
     return session
+
+
+def _create_nutzer() -> Nutzer:
+    adresse = Adresse(
+        id=999,
+        strasse="Mockstrasse",
+        hausnummer="1a",
+        plz="11111",
+        ort="Mockort",
+        nutzer_id=None,
+        nutzer=None,
+    )
+    einstellung = Einstellung(
+        id=999,
+        newsletter_aktiv=True,
+        benachrichtigungen_aktiv=True,
+        sprache="de",
+        nutzer_id=None,
+        nutzer=None,
+    )
+    nutzer = Nutzer(
+        id=None,
+        vorname="Max",
+        nachname="Mocktest",
+        email="mock@email.test",
+        username="mocktest",
+        telefonnummer="123456789",
+        geburtsdatum=date(2000, 1, 1),
+        beitrittsdatum=date(2025, 1, 31),
+        aktiv=True,
+        rolle=Rolle.NUTZER,
+        status=Status.AKTIV,
+        adresse=adresse,
+        einstellung=einstellung,
+        interessen=[Interesse.TECHNIK],
+    )
+    adresse.nutzer = nutzer
+    einstellung.nutzer = nutzer
+    return nutzer
