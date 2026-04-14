@@ -55,4 +55,52 @@ def test_post() -> None:
     assert not response.text
 
 
+@mark.rest
+@mark.post_request
+def test_post_invalid() -> None:
+    # arrange
+    neuer_nutzer_invalid: Final = {
+        "vorname": "",
+        "nachname": "",
+        "email": "falsche_email@",
+        "username": "x" * 21,
+        "telefonnummer": "123456",
+        "geburtsdatum": "2022-02-01",
+        "beitrittsdatum": "2024-01-01",
+        "aktiv": True,
+        "rolle": "INVALID",
+        "status": "AKTIV",
+        "interessen": ["TECHNIK"],
+        "adresse": {
+            "strasse": "",
+            "hausnummer": "",
+            "plz": "",
+            "ort": "",
+        },
+        "einstellung": {
+            "newsletter_aktiv": True,
+            "benachrichtigungen_aktiv": True,
+            "sprache": "",
+        },
+    }
+    headers = {"Content-Type": "application/json"}
+
+    # act
+    response: Final = post(
+        rest_url,
+        json=neuer_nutzer_invalid,
+        headers=headers,
+        verify=ctx,
+    )
+
+    # assert
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    body = response.text
+    assert "vorname" in body
+    assert "nachname" in body
+    assert "email" in body
+    assert "username" in body
+    assert "strasse" in body
+
+
 
