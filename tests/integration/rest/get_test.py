@@ -28,4 +28,17 @@ def test_get_by_email() -> None:
     assert nutzer.get("id") == 20
 
 
+@mark.rest
+@mark.get_request
+def test_get_by_email_not_found() -> None:
+    # arrange
+    params = {"email": "nicht@vorhanden.de"}
+
+    # act
+    response: Final = get(rest_url, params=params, verify=ctx)
+
+    # assert
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
 
