@@ -37,3 +37,25 @@ _write_service: Final = NutzerWriteService(
     user_service=_user_service,
 )
 _token_service: Final = TokenService()
+
+@strawberry.type
+class Query:
+    """Queries, um Nutzerdaten zu lesen."""
+
+    @strawberry.field
+    def nutzer(self, nutzer_id: strawberry.ID, info: Info) -> NutzerDTO | None:
+        """Daten zu einem Nutzer lesen."""
+        logger.debug("nutzer_id={}", nutzer_id)
+
+        request: Final[Request] = info.context.get("request")
+        user: Final = _token_service.get_user_from_request(request=request)
+        if user is None:
+            return None
+
+        try:
+            nutzer_dto: Final = _service.find_by_id(nutzer_id=int(nutzer_id))
+        except NotFoundError:
+            return None
+
+        logger.debug("{}", nutzer_dto)
+        return nutzer_dto
