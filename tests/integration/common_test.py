@@ -214,4 +214,47 @@ class StubReadService:
         return nachnamen
 
 
+class StubWriteService:
+    def __init__(self, nutzer: tuple[NutzerDTO, ...]) -> None:
+        self._nutzer = nutzer
+
+    def create(self, nutzer: Nutzer) -> NutzerDTO:
+        for eintrag in self._nutzer:
+            if eintrag.email == nutzer.email:
+                raise EmailExistsError(nutzer.email)
+            if eintrag.username == nutzer.username:
+                raise UsernameExistsError(nutzer.username or "")
+
+        nutzer.id = 1001
+        nutzer.version = 0
+        if nutzer.adresse is not None:
+            nutzer.adresse.nutzer_id = nutzer.id
+        if nutzer.einstellung is not None:
+            nutzer.einstellung.nutzer_id = nutzer.id
+        return NutzerDTO(nutzer)
+
+    def update(self, nutzer: Nutzer, nutzer_id: int, version: int) -> NutzerDTO:
+        nutzer_db = next((eintrag for eintrag in self._nutzer if eintrag.id == nutzer_id), None)
+        if nutzer_db is None:
+            raise NotFoundError(nutzer_id)
+        if nutzer_db.version > version:
+            raise VersionOutdatedError(version)
+
+        for eintrag in self._nutzer:
+            if eintrag.id != nutzer_id and eintrag.email == nutzer.email:
+                raise EmailExistsError(nutzer.email)
+
+        return _create_nutzer_dto(
+            nutzer_id=nutzer_id,
+            version=version + 1,
+            vorname=nutzer.vorname,
+            nachname=nutzer.nachname,
+            email=nutzer.email,
+            username=nutzer_db.username,
+        )
+
+    def delete_by_id(self, nutzer_id: int) -> None:
+        return None
+
+
 
