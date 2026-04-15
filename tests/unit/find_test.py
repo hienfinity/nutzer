@@ -109,3 +109,65 @@ def test_find_by_nachname_not_found(nutzer_service, session_mock) -> None:
     # assert
     assert err.type == NotFoundError
     assert str(err.value) == "Not Found"
+
+
+@mark.unit
+@mark.unit_find
+def test_find_by_email(nutzer_service, session_mock) -> None:
+    # arrange
+    email = "mock@email.test"
+    nutzer_id = 1
+    adresse_mock = Adresse(
+        id=1,
+        strasse="Mockstrasse",
+        hausnummer="1a",
+        plz="11111",
+        ort="Mockort",
+        nutzer_id=nutzer_id,
+        nutzer=None,
+    )
+    einstellung_mock = Einstellung(
+        id=1,
+        newsletter_aktiv=True,
+        benachrichtigungen_aktiv=True,
+        sprache="de",
+        nutzer_id=nutzer_id,
+        nutzer=None,
+    )
+    nutzer_mock = Nutzer(
+        id=nutzer_id,
+        version=0,
+        vorname="Mock",
+        nachname="Mocktest",
+        email=email,
+        username="mocktest",
+        telefonnummer="123456",
+        geburtsdatum=date(2025, 1, 31),
+        beitrittsdatum=date(2026, 1, 31),
+        aktiv=True,
+        rolle=Rolle.NUTZER,
+        status=Status.AKTIV,
+        interessen=[Interesse.TECHNIK],
+        adresse=adresse_mock,
+        einstellung=einstellung_mock,
+        erzeugt=None,
+        aktualisiert=None,
+    )
+    adresse_mock.nutzer = nutzer_mock
+    einstellung_mock.nutzer = nutzer_mock
+    suchparameter = {"email": email}
+    pageable = Pageable(size=5, number=0)
+    nutzer_slice = Slice(content=(nutzer_mock,), total_elements=1)
+
+    nutzer_service.repo.find = session_mock.find
+    session_mock.find.return_value = nutzer_slice
+
+    # act
+    nutzer_dto_slice = nutzer_service.find(
+        suchparameter=suchparameter,
+        pageable=pageable,
+    )
+
+    # assert
+    assert len(nutzer_dto_slice.content) == 1
+    assert nutzer_dto_slice.content[0].email == email
