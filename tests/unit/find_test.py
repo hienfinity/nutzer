@@ -171,3 +171,26 @@ def test_find_by_email(nutzer_service, session_mock) -> None:
     # assert
     assert len(nutzer_dto_slice.content) == 1
     assert nutzer_dto_slice.content[0].email == email
+
+
+@mark.unit
+@mark.unit_find
+def test_find_by_email_not_found(nutzer_service, session_mock) -> None:
+    # arrange
+    email = "not@found.mock"
+    suchparameter = {"email": email}
+    pageable = Pageable(size=5, number=0)
+    nutzer_slice = Slice(content=(), total_elements=0)
+
+    nutzer_service.repo.find = session_mock.find
+    session_mock.find.return_value = nutzer_slice
+
+    # act
+    with raises(NotFoundError) as err:
+        nutzer_service.find(
+            suchparameter=suchparameter,
+            pageable=pageable,
+        )
+
+    # assert
+    assert str(err.value) == "Not Found"
