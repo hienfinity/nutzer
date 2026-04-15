@@ -16,7 +16,7 @@ from nutzer.graphql_api.graphql_types import (
     NutzerInput,
     Suchparameter,
 )
-from nutzer.repository import Pageable, NutzerRepository
+from nutzer.repository import NutzerRepository, Pageable
 from nutzer.router.nutzer_model import NutzerModel
 from nutzer.security import Role, TokenService, UserService
 from nutzer.service import (
@@ -37,6 +37,7 @@ _write_service: Final = NutzerWriteService(
     user_service=_user_service,
 )
 _token_service: Final = TokenService()
+
 
 @strawberry.type
 class Query:
@@ -94,6 +95,10 @@ class Query:
         logger.debug("{}", nutzer_dto)
         return nutzer_dto.content
 
+@strawberry.type
+class Mutation:
+    """Mutations, um Nutzerdaten zu schreiben oder Tokens zu lesen."""
+
     @strawberry.mutation
     def create(self, nutzer_input: NutzerInput) -> CreatePayload:
         """Einen neuen Nutzer anlegen."""
@@ -126,6 +131,7 @@ class Query:
 schema: Final = strawberry.Schema(query=Query, mutation=Mutation)
 
 Context = dict[str, Request]
+
 
 def get_context(request: Request) -> Context:
     """Request von FastAPI an Strawberry weiterreichen."""

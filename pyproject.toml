@@ -57,14 +57,23 @@ dev = [
 [tool.pytest.ini_options]
 minversion = "8.4.1"
 pythonpath = ["src", "tests/integration"]
+testpaths = ["tests/integration", "tests/unit"]
 addopts = "--html=report.html --cov --cov-report=html"
 markers = [
+    "graphql: GraphQL-Integrationstests",
+    "query: GraphQL-Queries",
+    "mutation: GraphQL-Mutations",
+    "login: Tests fuer Login",
     "rest: REST-Integrationstests",
     "get_request: Tests fuer HTTP GET",
     "post_request: Tests fuer HTTP POST",
     "put_request: Tests fuer HTTP PUT",
     "delete_request: Tests fuer HTTP DELETE",
     "health: Health-Checks",
+    "unit: Unit-Tests",
+    "unit_find: Unit-Tests fuer find()",
+    "unit_find_by_id: Unit-Tests fuer find_by_id()",
+    "unit_create: Unit-Tests fuer create()",
 ]
 
 [tool.pytest_env]
