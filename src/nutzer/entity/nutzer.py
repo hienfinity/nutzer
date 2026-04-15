@@ -54,6 +54,7 @@ class Nutzer(Base):
     id: Mapped[int | None] = mapped_column(
         Identity(start=1000),
         primary_key=True,
+        nullable=False,
     )
     """Die generierte ID gemäß der zugehörigen IDENTITY-Spalte."""
 
