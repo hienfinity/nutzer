@@ -2,11 +2,12 @@
 
 from datetime import date
 
-from pytest import fixture, mark
+from pytest import fixture, mark, raises
 from pytest_mock import MockerFixture
 
 from nutzer.entity import Adresse, Einstellung, Interesse, Nutzer, Rolle, Status
 from nutzer.repository import Pageable, Slice
+from nutzer.service import NotFoundError
 
 
 @fixture
@@ -84,3 +85,27 @@ def test_find_by_nachname(nutzer_service, session_mock) -> None:
     # assert
     assert len(nutzer_dto_slice.content) == 1
     assert nutzer_dto_slice.content[0].nachname == nachname
+
+
+@mark.unit
+@mark.unit_find
+def test_find_by_nachname_not_found(nutzer_service, session_mock) -> None:
+    # arrange
+    nachname = "Notfound"
+    suchparameter = {"nachname": nachname}
+    pageable = Pageable(size=5, number=0)
+    nutzer_slice = Slice(content=(), total_elements=0)
+
+    nutzer_service.repo.find = session_mock.find
+    session_mock.find.return_value = nutzer_slice
+
+    # act
+    with raises(NotFoundError) as err:
+        nutzer_service.find(
+            suchparameter=suchparameter,
+            pageable=pageable,
+        )
+
+    # assert
+    assert err.type == NotFoundError
+    assert str(err.value) == "Not Found"
