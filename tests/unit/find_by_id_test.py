@@ -76,3 +76,26 @@ def test_find_by_id(nutzer_service, session_mock) -> None:
 
     # Assert
     assert asdict(nutzer_dto) == asdict(nutzer_dto_mock)
+
+
+@mark.unit
+@mark.unit_find_by_id
+def test_find_by_id_not_found(
+    nutzer_service: NutzerService,
+    session_mock,
+) -> None:
+    # Arrange
+    nutzer_id = 999
+    session_mock.commit.return_value = None
+
+    # Repository mocken
+    nutzer_service.repo.find_by_id = lambda nutzer_id, session: None
+
+    # Act
+    with raises(NotFoundError) as err:
+        nutzer_service.find_by_id(nutzer_id=nutzer_id)
+
+    # Assert
+    assert err.type is NotFoundError
+    assert str(err.value) == "Not Found"
+    assert err.value.nutzer_id == nutzer_id
