@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 @fixture
-def session_mock(mocker: "MockerFixture"):
+def session_mock(mocker: MockerFixture):
     session = mocker.Mock()
     # Patching von "with Session() as session:" in nutzer_service.py
     mocker.patch(
@@ -70,6 +70,7 @@ def test_find_by_id(nutzer_service, session_mock) -> None:
 
     nutzer_dto_mock = NutzerDTO(nutzer_mock)
     session_mock.commit.return_value = None
+    nutzer_service.repo.find_by_id = lambda nutzer_id, session: nutzer_mock
 
     # Act
     nutzer_dto = nutzer_service.find_by_id(nutzer_id=nutzer_id)
