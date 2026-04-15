@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 @fixture
-def session_mock(mocker: "MockerFixture"):
+def session_mock(mocker: MockerFixture):
     session = mocker.Mock()
     # Patching von "with Session() as session:" in nutzer_write_service.py
     mocker.patch(
@@ -73,6 +73,7 @@ def test_create(nutzer_write_service, session_mock) -> None:
     generierte_id = 1
 
     session_mock.add.return_value = None
+    session_mock.commit.return_value = None
     # exists_email(...) -> False, exists_username(...) -> False
     session_mock.scalar.side_effect = [0, None]
 
@@ -104,7 +105,25 @@ def test_create_username_exists(nutzer_write_service, session_mock) -> None:
         nutzer_write_service.create(nutzer=nutzer)
 
     # Assert
-    assert err.type is UsernameExistsError
+    assert err.type == UsernameExistsError
+
+
+@mark.unit
+@mark.unit_create
+def test_create_username_none(nutzer_write_service, session_mock) -> None:
+    # Arrange
+    nutzer = _create_nutzer()
+    nutzer.username = None
+
+    # exists_email(...) -> False
+    session_mock.scalar.side_effect = [0]
+
+    # Act
+    with raises(ValueError) as err:
+        nutzer_write_service.create(nutzer=nutzer)
+
+    # Assert
+    assert err.type == ValueError
 
 
 @mark.unit
@@ -121,4 +140,4 @@ def test_create_email_exists(nutzer_write_service, session_mock) -> None:
         nutzer_write_service.create(nutzer=nutzer)
 
     # Assert
-    assert err.type is EmailExistsError
+    assert err.type == EmailExistsError

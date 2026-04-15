@@ -46,6 +46,8 @@ class NutzerWriteService:
                 raise EmailExistsError(email=email)
 
             username: Final = nutzer.username
+            if username is None:
+                raise ValueError
             if self.repo.exists_username(username=username, session=session):
                 raise UsernameExistsError(username)
 

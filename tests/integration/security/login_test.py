@@ -1,4 +1,3 @@
-# ruff: noqa: S101, D103
 # Copyright (C) 2022 - present Juergen Zimmermann, Hochschule Karlsruhe
 #
 # This program is free software: you can redistribute it and/or modify
@@ -24,11 +23,11 @@ from common_test import (
     base_url,
     ctx,
     login,
+    post,
     timeout,
     token_path,
     username_admin,
 )
-from httpx import post
 from pytest import mark
 
 # fuer hypercorn: INFO statt DEBUG

@@ -6,6 +6,7 @@ from typing import Any, Final
 
 from fastapi.testclient import TestClient
 
+import nutzer.graphql_api.schema as graphql_schema
 from nutzer.entity import Adresse, Einstellung, Interesse, Nutzer, Rolle, Status
 from nutzer.fastapi_app import app
 from nutzer.repository import Pageable, Slice
@@ -36,6 +37,7 @@ __all__ = [
     "keycloak_populate",
     "keycloak_populate_path",
     "login",
+    "login_graphql",
     "password_admin",
     "post",
     "put",
@@ -283,7 +285,25 @@ class StubTokenService:
         roles = token["resource_access"]["python-client"]["roles"]
         return [Role[rolle.upper()] for rolle in roles]
 
-    def get_user_from_request(self, _request: Any) -> User:
+    def get_user_from_token(self, token: str) -> User:
+        if token == "token-admin":
+            return User(
+                username="admin",
+                email="admin@example.de",
+                nachname="Admin",
+                vorname="Ada",
+                roles=[Role.ADMIN],
+            )
+
+        return User(
+            username="alice",
+            email="alice@example.de",
+            nachname="Anderson",
+            vorname="Alice",
+            roles=[Role.NUTZER],
+        )
+
+    def get_user_from_request(self, request: Any | None = None) -> User:
         return User(
             username="admin",
             email="admin@example.de",
@@ -302,9 +322,13 @@ def _request(method: str, url: str, **kwargs: Any) -> Any:
     kwargs.pop("timeout", None)
 
     nutzer = _nutzer_liste()
+    token_service = StubTokenService()
     app.dependency_overrides[get_service] = lambda: StubReadService(nutzer)
     app.dependency_overrides[get_write_service] = lambda: StubWriteService(nutzer)
-    app.dependency_overrides[get_token_service] = lambda: StubTokenService()
+    app.dependency_overrides[get_token_service] = lambda: token_service
+    graphql_schema._service = StubReadService(nutzer)
+    graphql_schema._write_service = StubWriteService(nutzer)
+    graphql_schema._token_service = token_service
 
     try:
         with TestClient(app) as client:
@@ -336,6 +360,30 @@ def login(
     token: Final = response_body.get("token")
     if token is None or not isinstance(token, str):
         raise RuntimeError(f"login() mit ungueltigem Token: type={type(token)}")
+    return token
+
+
+def login_graphql(
+    username: str = username_admin,
+    password: str = password_admin,  # NOSONAR
+) -> str:
+    login_query: Final = {
+        "query": f'mutation {{ login(username: "{username}", password: "{password}") {{ token }} }}'
+    }
+    response: Final = post(
+        graphql_url,
+        json=login_query,
+        verify=ctx,
+        timeout=timeout,
+    )
+    if response.status_code != 200:
+        raise RuntimeError(f"login_graphql() mit Statuscode {response.status_code}")
+    response_body: Final = response.json()
+    token: Final = response_body.get("data", {}).get("login", {}).get("token")
+    if token is None or not isinstance(token, str):
+        raise RuntimeError(
+            f"login_graphql() mit ungueltigem Token: type={type(token)}"
+        )
     return token
 
 

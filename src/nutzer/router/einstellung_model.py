@@ -41,6 +41,7 @@ class EinstellungModel(BaseModel):
         logger.debug("self={}", self)
         einstellung_dict = self.model_dump()
         einstellung_dict["id"] = None
+        einstellung_dict["nutzer_id"] = None
         einstellung_dict["nutzer"] = None
 
         einstellung = Einstellung(**einstellung_dict)

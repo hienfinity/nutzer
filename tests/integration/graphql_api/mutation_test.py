@@ -3,8 +3,7 @@
 from http import HTTPStatus
 from typing import Final
 
-from common_test import ctx, graphql_url
-from httpx import post
+from common_test import ctx, graphql_url, post
 from pytest import mark
 
 
@@ -57,6 +56,7 @@ def test_create() -> None:
     assert isinstance(response_body, dict)
     assert isinstance(response_body["data"]["create"]["id"], int)
     assert response_body.get("errors") is None
+
 
 @mark.graphql
 @mark.mutation

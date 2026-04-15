@@ -3,8 +3,7 @@
 from http import HTTPStatus
 from typing import Final
 
-from common_test import ctx, graphql_url, login_graphql
-from httpx import post
+from common_test import ctx, graphql_url, login_graphql, post
 from pytest import mark
 
 GRAPHQL_PATH: Final = "/graphql"
@@ -104,7 +103,7 @@ def test_query_email() -> None:
     query: Final = {
         "query": """
             {
-                nutzerListe(suchparameter: {email: "admin@acme.com"}) {
+                nutzerListe(suchparameter: {email: "admin@example.de"}) {
                     id
                     version
                     vorname
@@ -189,7 +188,7 @@ def test_query_nachname() -> None:
     query: Final = {
         "query": """
             {
-                nutzerListe(suchparameter: {nachname: "Alice"}) {
+                nutzerListe(suchparameter: {nachname: "son"}) {
                     id
                     version
                     vorname

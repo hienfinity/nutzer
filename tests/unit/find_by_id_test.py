@@ -87,9 +87,6 @@ def test_find_by_id_not_found(
 ) -> None:
     # Arrange
     nutzer_id = 999
-    session_mock.commit.return_value = None
-
-    # Repository mocken
     nutzer_service.repo.find_by_id = lambda nutzer_id, session: None
 
     # Act
@@ -97,6 +94,6 @@ def test_find_by_id_not_found(
         nutzer_service.find_by_id(nutzer_id=nutzer_id)
 
     # Assert
-    assert err.type is NotFoundError
+    assert err.type == NotFoundError
     assert str(err.value) == "Not Found"
     assert err.value.nutzer_id == nutzer_id

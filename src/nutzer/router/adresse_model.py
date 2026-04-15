@@ -45,6 +45,7 @@ class AdresseModel(BaseModel):
         logger.debug("self={}", self)
         adresse_dict = self.model_dump()
         adresse_dict["id"] = None
+        adresse_dict["nutzer_id"] = None
         adresse_dict["nutzer"] = None
 
         adresse = Adresse(**adresse_dict)
