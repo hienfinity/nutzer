@@ -20,7 +20,7 @@ nutzer_write_router: Final = APIRouter(tags=["Schreiben"])
 
 @nutzer_write_router.post(
     "",
-    # dependencies=[Depends(RolesRequired(Role.ADMIN))],
+    dependencies=[Depends(RolesRequired(Role.ADMIN))],
 )
 def post(
     nutzer_model: NutzerModel,
@@ -47,7 +47,7 @@ def post(
 
 @nutzer_write_router.put(
     "/{nutzer_id}",
-    # dependencies=[Depends(RolesRequired([Role.ADMIN, Role.NUTZER]))],
+    dependencies=[Depends(RolesRequired([Role.ADMIN, Role.NUTZER]))],
 )
 def put(
     nutzer_id: int,
@@ -112,7 +112,7 @@ def put(
 
 @nutzer_write_router.delete(
     "/{nutzer_id}",
-    # dependencies=[Depends(RolesRequired([Role.ADMIN, Role.NUTZER]))],
+    dependencies=[Depends(RolesRequired([Role.ADMIN, Role.NUTZER]))],
 )
 def delete_by_id(
     nutzer_id: int,
