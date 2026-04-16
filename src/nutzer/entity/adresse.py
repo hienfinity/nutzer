@@ -1,5 +1,7 @@
 """Entity-Klasse fuer eine Adresse in der Domaene Nutzer."""
 
+
+from nutzer.entity.nutzer import Nutzer
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Identity
