@@ -3,7 +3,7 @@
 from http import HTTPStatus
 from typing import Final
 
-from common_test import ctx, get, rest_url
+from common_test import auth_headers, ctx, get, rest_url
 from pytest import mark
 
 
@@ -12,9 +12,10 @@ from pytest import mark
 def test_get_by_id() -> None:
     # arrange
     nutzer_id: Final = 20
+    headers: Final = auth_headers()
 
     # act
-    response: Final = get(f"{rest_url}/{nutzer_id}", verify=ctx)
+    response: Final = get(f"{rest_url}/{nutzer_id}", headers=headers, verify=ctx)
 
     # assert
     assert response.status_code == HTTPStatus.OK
@@ -30,9 +31,10 @@ def test_get_by_id() -> None:
 def test_get_by_id_not_found() -> None:
     # arrange
     nutzer_id: Final = 999999
+    headers: Final = auth_headers()
 
     # act
-    response: Final = get(f"{rest_url}/{nutzer_id}", verify=ctx)
+    response: Final = get(f"{rest_url}/{nutzer_id}", headers=headers, verify=ctx)
 
     # assert
     assert response.status_code == HTTPStatus.NOT_FOUND
@@ -43,7 +45,8 @@ def test_get_by_id_not_found() -> None:
 def test_get_by_id_etag() -> None:
     # arrange
     nutzer_id: Final = 20
-    headers = {"If-None-Match": '"1"'}
+    headers = auth_headers()
+    headers["If-None-Match"] = '"1"'
 
     # act
     response: Final = get(
@@ -62,7 +65,8 @@ def test_get_by_id_etag() -> None:
 def test_get_by_id_etag_invalid() -> None:
     # arrange
     nutzer_id: Final = 20
-    headers = {"If-None-Match": "xxx"}
+    headers = auth_headers()
+    headers["If-None-Match"] = "xxx"
 
     # act
     response: Final = get(
