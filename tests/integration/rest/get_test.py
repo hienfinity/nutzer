@@ -3,7 +3,7 @@
 from http import HTTPStatus
 from typing import Final
 
-from common_test import ctx, get, rest_url
+from common_test import auth_headers, ctx, get, rest_url
 from pytest import mark
 
 
@@ -12,9 +12,10 @@ from pytest import mark
 def test_get_by_email() -> None:
     # arrange
     params = {"email": "alice@example.de"}
+    headers = auth_headers()
 
     # act
-    response: Final = get(rest_url, params=params, verify=ctx)
+    response: Final = get(rest_url, params=params, headers=headers, verify=ctx)
 
     # assert
     assert response.status_code == HTTPStatus.OK
@@ -33,9 +34,10 @@ def test_get_by_email() -> None:
 def test_get_by_email_not_found() -> None:
     # arrange
     params = {"email": "nicht@vorhanden.de"}
+    headers = auth_headers()
 
     # act
-    response: Final = get(rest_url, params=params, verify=ctx)
+    response: Final = get(rest_url, params=params, headers=headers, verify=ctx)
 
     # assert
     assert response.status_code == HTTPStatus.NOT_FOUND
@@ -46,9 +48,10 @@ def test_get_by_email_not_found() -> None:
 def test_get_by_nachname() -> None:
     # arrange
     params = {"nachname": "son"}
+    headers = auth_headers()
 
     # act
-    response: Final = get(rest_url, params=params, verify=ctx)
+    response: Final = get(rest_url, params=params, headers=headers, verify=ctx)
 
     # assert
     assert response.status_code == HTTPStatus.OK
@@ -67,9 +70,10 @@ def test_get_by_nachname() -> None:
 def test_get_by_nachname_not_found() -> None:
     # arrange
     params = {"nachname": "Nichtvorhanden"}
+    headers = auth_headers()
 
     # act
-    response: Final = get(rest_url, params=params, verify=ctx)
+    response: Final = get(rest_url, params=params, headers=headers, verify=ctx)
 
     # assert
     assert response.status_code == HTTPStatus.NOT_FOUND
@@ -80,9 +84,10 @@ def test_get_by_nachname_not_found() -> None:
 def test_get_nachnamen() -> None:
     # arrange
     teil: Final = "ll"
+    headers = auth_headers()
 
     # act
-    response: Final = get(f"{rest_url}/nachnamen/{teil}", verify=ctx)
+    response: Final = get(f"{rest_url}/nachnamen/{teil}", headers=headers, verify=ctx)
 
     # assert
     assert response.status_code == HTTPStatus.OK
@@ -98,9 +103,10 @@ def test_get_nachnamen() -> None:
 def test_get_nachnamen_not_found() -> None:
     # arrange
     teil: Final = "zzz"
+    headers = auth_headers()
 
     # act
-    response: Final = get(f"{rest_url}/nachnamen/{teil}", verify=ctx)
+    response: Final = get(f"{rest_url}/nachnamen/{teil}", headers=headers, verify=ctx)
 
     # assert
     assert response.status_code == HTTPStatus.NOT_FOUND
