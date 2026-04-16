@@ -15,6 +15,7 @@
 
 """Konfiguration für den privaten Schlüssel und das Zertifikat für TLS."""
 
+from importlib.abc import Traversable
 from importlib.resources import files
 from typing import TYPE_CHECKING, Final
 
