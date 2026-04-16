@@ -9,34 +9,27 @@ graphql:
   headers:
     - name: Authorization
       value: Bearer {{token}}
+    - name: nachnamo
+      value: "{{currentNachname}}"
   body:
     query: |-
       {
-        nutzerListe(suchparameter: {nachname: "{{currentNachnameTeil}}"}) {
+        nutzerListe(suchparameter: {nachname: "{{currentNachname}}"}) {
           id
           nachname
           email
         }
       }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrdVd0aHRLT0o2T2NtTnl4bG4xT1p2ZlJoUk5MX1ZCaEZuckhkeDdycTYwIn0.eyJleHAiOjE4MTk1NDM4NjEsImlhdCI6MTc3NjM0Mzg2MSwianRpIjoib25ydHJvOjZhMTA1ZmRiLTJmNTctZmZhZC1iMDk5LTgyNTk2MDQ2MzczZCIsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0Ojg4NDMvcmVhbG1zL3B5dGhvbiIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiJkOTZlZTI5MS1kMTI3LTRlMWItOWFmNy04MWYyOGU1NjlmY2IiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJweXRob24tY2xpZW50Iiwic2lkIjoiQ1ZPZFFnYWxCM21sZmJORjJBNVdFZVQ3IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6W10sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLXB5dGhvbiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbInZpZXctcmVhbG0iLCJ2aWV3LWlkZW50aXR5LXByb3ZpZGVycyIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwicmVhbG0tYWRtaW4iLCJjcmVhdGUtY2xpZW50IiwibWFuYWdlLXVzZXJzIiwicXVlcnktcmVhbG1zIiwidmlldy1hdXRob3JpemF0aW9uIiwicXVlcnktY2xpZW50cyIsInF1ZXJ5LXVzZXJzIiwibWFuYWdlLWV2ZW50cyIsIm1hbmFnZS1yZWFsbSIsInZpZXctZXZlbnRzIiwidmlldy11c2VycyIsInZpZXctY2xpZW50cyIsIm1hbmFnZS1hdXRob3JpemF0aW9uIiwibWFuYWdlLWNsaWVudHMiLCJxdWVyeS1ncm91cHMiXX0sInB5dGhvbi1jbGllbnQiOnsicm9sZXMiOlsibnV0emVyIiwiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJQeXRob24gQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiIsImdpdmVuX25hbWUiOiJQeXRob24iLCJmYW1pbHlfbmFtZSI6IkFkbWluIiwiZW1haWwiOiJhZG1pbkBhY21lLmNvbSJ9.GBMF_U9y9yqHGo-lJ2kuMyZm4SFzBWCuWM19tnaMqCrkeWBPKO8G_YrvdHXtc4ryY4Hw-LZf5zoPIKicUUFtECWkoq6VQYr6LIr5nyr_anR9s7CNLicQoyxT9wWNkr1n1S8wJkp4xv0H6Rz1VzhUxlCqb5oANN-C5fpe5OQiM8BRZ-qnqCbOn8wqkk3ZwzrElW7vVbcRdScero_Hp0md4sN3TCOh09cWBjbhERv53PScN37R9Zk_oSApIokCGab-0ueE5RKYtu0R2AJyU71sPrzaIbbxXTPCgYFwjQ3mTIqiKKjSvHssMCCpqnE6GNhPOpikgzzpDydXmTI3kgFvfg
 
 runtime:
   scripts:
-    - type: before-request
-      code: |-
-        const nachname = bru.getVar('currentNachname') || '';
-        const fallback = bru.getVar('currentNachnameTeil') || 'son';
-        if (nachname.length >= 3) {
-          const teil = nachname.toLowerCase().includes('son')
-            ? 'son'
-            : nachname.slice(0, Math.min(5, nachname.length));
-          bru.setVar('currentNachnameTeil', teil);
-        } else {
-          bru.setVar('currentNachnameTeil', fallback);
-        }
     - type: after-response
       code: |-
-        const expected = bru.getVar('currentNachnameTeil')?.toLowerCase();
-        test('Body: Nachname enthaelt aktuellen Suchteil', () => {
+        const expected = bru.getVar('currentNachname')?.toLowerCase();
+        test('Body: Nachname enthaelt aktuellen Nachnamen', () => {
           res.getBody().data.nutzerListe.forEach(nutzer => {
             expect(nutzer.nachname.toLowerCase()).to.contain(expected);
           });
