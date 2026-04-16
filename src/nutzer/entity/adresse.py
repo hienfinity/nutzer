@@ -1,5 +1,6 @@
 """Entity-Klasse fuer eine Adresse in der Domaene Nutzer."""
 
+
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Identity
@@ -38,7 +39,7 @@ class Adresse(Base):
     nutzer_id: Mapped[int] = mapped_column(ForeignKey("nutzer.id"), unique=True)
     """Die ID des zugehoerigen Nutzers als Fremdschluessel."""
 
-    nutzer: Mapped[Nutzer] = relationship(back_populates="adresse")
+    nutzer: Mapped["Nutzer"] = relationship(back_populates="adresse")
     """Das zugehoerige Nutzer-Objekt."""
 
     def __repr__(self) -> str:
