@@ -21,7 +21,7 @@ nutzer_router: Final = APIRouter(tags=["Lesen"])
 
 @nutzer_router.get(
     "/{nutzer_id}",
-    # dependencies=[Depends(RolesRequired([Role.ADMIN, Role.NUTZER]))],
+    dependencies=[Depends(RolesRequired([Role.ADMIN, Role.NUTZER]))],
 )
 def get_by_id(
     nutzer_id: int,
@@ -36,9 +36,9 @@ def get_by_id(
     :return: Response mit dem gefundenen Nutzerdatensatz
     :rtype: Response
     """
-    # Spaeter aktivieren, sobald Security komplett eingebunden ist:
-    # user: Final[User] = request.state.current_user
+    user: Final[User] = request.state.current_user
     logger.debug("nutzer_id={}", nutzer_id)
+    logger.debug("current_user={}", user)
 
     nutzer: Final = service.find_by_id(nutzer_id=nutzer_id)
     logger.debug("{}", nutzer)
@@ -65,7 +65,7 @@ def get_by_id(
 
 @nutzer_router.get(
     "",
-    # dependencies=[Depends(RolesRequired(Role.ADMIN))],
+    dependencies=[Depends(RolesRequired(Role.ADMIN))],
 )
 def get(
     request: Request,
@@ -103,7 +103,7 @@ def get(
 
 @nutzer_router.get(
     "/nachnamen/{teil}",
-    # dependencies=[Depends(RolesRequired(Role.ADMIN))],
+    dependencies=[Depends(RolesRequired(Role.ADMIN))],
 )
 def get_nachnamen(
     teil: str,
