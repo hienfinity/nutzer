@@ -12,7 +12,7 @@ from nutzer.fastapi_app import app
 from nutzer.repository import Pageable, Slice
 from nutzer.router.dependencies import get_service, get_write_service
 from nutzer.security.dependencies import get_token_service
-from nutzer.security.exceptions import LoginError
+from nutzer.security.exceptions import AuthorizationError, LoginError
 from nutzer.security.role import Role
 from nutzer.security.user import User
 from nutzer.service import (
@@ -24,6 +24,7 @@ from nutzer.service import (
 )
 
 __all__ = [
+    "auth_headers",
     "base_url",
     "check_readiness",
     "ctx",
@@ -304,13 +305,22 @@ class StubTokenService:
         )
 
     def get_user_from_request(self, request: Any | None = None) -> User:
-        return User(
-            username="admin",
-            email="admin@example.de",
-            nachname="Admin",
-            vorname="Ada",
-            roles=[Role.ADMIN],
-        )
+        if request is None:
+            raise AuthorizationError
+
+        authorization_header = request.headers.get("Authorization")
+        if authorization_header is None:
+            raise AuthorizationError
+
+        try:
+            authorization_scheme, bearer_token = authorization_header.split()
+        except ValueError as err:
+            raise AuthorizationError from err
+
+        if authorization_scheme.lower() != "bearer":
+            raise AuthorizationError
+
+        return self.get_user_from_token(bearer_token)
 
 
 def _to_path(url: str) -> str:
@@ -361,6 +371,14 @@ def login(
     if token is None or not isinstance(token, str):
         raise RuntimeError(f"login() mit ungueltigem Token: type={type(token)}")
     return token
+
+
+def auth_headers(
+    username: str = username_admin,
+    password: str = password_admin,  # NOSONAR
+) -> dict[str, str]:
+    token = login(username=username, password=password)
+    return {"Authorization": f"Bearer {token}"}
 
 
 def login_graphql(
