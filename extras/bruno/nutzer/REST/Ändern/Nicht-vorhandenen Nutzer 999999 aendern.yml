@@ -1,0 +1,41 @@
+info:
+  name: Nicht-vorhandenen Nutzer 999999 aendern
+  type: http
+  seq: 7
+
+http:
+  method: PUT
+  url: "{{restUrl}}/999999"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+    - name: Content-Type
+      value: application/json
+    - name: If-Match
+      value: '"0"'
+  body:
+    type: json
+    data: |-
+      {
+        "vorname": "Alicia",
+        "nachname": "Testerput",
+        "email": "alice@example.de.put",
+        "telefonnummer": "654321",
+        "geburtsdatum": "2022-01-03",
+        "beitrittsdatum": "2024-01-03",
+        "aktiv": false,
+        "rolle": "NUTZER",
+        "status": "AKTIV"
+      }
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "404"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

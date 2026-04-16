@@ -1,0 +1,41 @@
+info:
+  name: Token als Admin holen
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{tokenUrl}}"
+  body:
+    type: json
+    data: |-
+      {
+        "username": "{{username}}",
+        "password": "{{password}}"
+      }
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const token = res.getBody()?.token;
+        if (token) {
+          bru.setVar('token', token);
+        }
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.token
+      operator: isString
+    - expression: res.body.token
+      operator: isNotEmpty
+    - expression: res.body.rollen[0]
+      operator: eq
+      value: ADMIN
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

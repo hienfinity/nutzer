@@ -1,0 +1,11 @@
+info:
+  name: Token
+  type: folder
+  seq: 1
+
+request:
+  auth: inherit
+
+docs:
+  content: Token fuer Bruno ueber den aktuellen /auth/token-Endpunkt pruefen.
+  type: text/markdown

@@ -1,0 +1,52 @@
+info:
+  name: Neuer Nutzer mit bereits existierender Email
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{restUrl}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "vorname": "Test",
+        "nachname": "Nachnamerest",
+        "email": "alice@example.de",
+        "username": "emailexists",
+        "telefonnummer": "123456",
+        "geburtsdatum": "2022-02-01",
+        "beitrittsdatum": "2024-01-01",
+        "aktiv": true,
+        "rolle": "NUTZER",
+        "status": "AKTIV",
+        "interessen": ["TECHNIK"],
+        "adresse": {
+          "strasse": "Restweg",
+          "hausnummer": "1",
+          "plz": "99999",
+          "ort": "Restort"
+        },
+        "einstellung": {
+          "newsletter_aktiv": true,
+          "benachrichtigungen_aktiv": true,
+          "sprache": "de"
+        }
+      }
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "422"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

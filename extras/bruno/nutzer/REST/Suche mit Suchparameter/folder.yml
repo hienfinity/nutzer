@@ -1,0 +1,11 @@
+info:
+  name: Suche mit Suchparameter
+  type: folder
+  seq: 3
+
+request:
+  auth: inherit
+
+docs:
+  content: REST-Suche fuer alle, nach Email, nach Nachname und fuer Nachnamen-Teilstrings.
+  type: text/markdown

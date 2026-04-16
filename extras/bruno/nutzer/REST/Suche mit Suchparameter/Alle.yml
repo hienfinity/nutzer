@@ -1,0 +1,32 @@
+info:
+  name: Alle
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{restUrl}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+    - name: Accept
+      value: application/json
+  auth:
+    type: bearer
+    token: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrdVd0aHRLT0o2T2NtTnl4bG4xT1p2ZlJoUk5MX1ZCaEZuckhkeDdycTYwIn0.eyJleHAiOjE4MTk1NDM3NTYsImlhdCI6MTc3NjM0Mzc1NiwianRpIjoib25ydHJvOjM1NzI4MmZkLWVkMGYtMTkyMy02MTg0LTNhNThkMzAzYzM1MSIsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0Ojg4NDMvcmVhbG1zL3B5dGhvbiIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiJkOTZlZTI5MS1kMTI3LTRlMWItOWFmNy04MWYyOGU1NjlmY2IiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJweXRob24tY2xpZW50Iiwic2lkIjoiMlFHQlpkVmMzRS1rampCYWJmOTNXeG9IIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6W10sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLXB5dGhvbiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbInZpZXctcmVhbG0iLCJ2aWV3LWlkZW50aXR5LXByb3ZpZGVycyIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwicmVhbG0tYWRtaW4iLCJjcmVhdGUtY2xpZW50IiwibWFuYWdlLXVzZXJzIiwicXVlcnktcmVhbG1zIiwidmlldy1hdXRob3JpemF0aW9uIiwicXVlcnktY2xpZW50cyIsInF1ZXJ5LXVzZXJzIiwibWFuYWdlLWV2ZW50cyIsIm1hbmFnZS1yZWFsbSIsInZpZXctZXZlbnRzIiwidmlldy11c2VycyIsInZpZXctY2xpZW50cyIsIm1hbmFnZS1hdXRob3JpemF0aW9uIiwibWFuYWdlLWNsaWVudHMiLCJxdWVyeS1ncm91cHMiXX0sInB5dGhvbi1jbGllbnQiOnsicm9sZXMiOlsibnV0emVyIiwiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJQeXRob24gQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiIsImdpdmVuX25hbWUiOiJQeXRob24iLCJmYW1pbHlfbmFtZSI6IkFkbWluIiwiZW1haWwiOiJhZG1pbkBhY21lLmNvbSJ9.f7MUwzNKUs9fC_sUYrxttPQouMH6-TxNCJ0VZ760ns2ZrZ0fUiyr4XpF7gcp8oTFBqQRqjiNEM6knfeDuJF3bcw1Whfeyo6s-ZJqbiJBjSQL_xamsTnVIQkI6xQd6lZJMovxakRjYM-CwcolckyfsmAWW-e1L6vxaq36MHHZL0WKh1OJ4kSZHGZ7PPKPgALlfLP-BNEzsgpwNXQseqr7HIQWjNhCxkh1mQIm7Nwvr8CEl0AUTnnjVjb2mOG75NOG7m59nUQzHNJN5dhMZMXv1CiI2RSr2gCdNm37NwHhRlf6OIkvuCHExbXsc7zcz1ZByRhUn6R2wcBN2IYXt9b5_g
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.content
+      operator: isArray
+    - expression: res.body.content
+      operator: isNotEmpty
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

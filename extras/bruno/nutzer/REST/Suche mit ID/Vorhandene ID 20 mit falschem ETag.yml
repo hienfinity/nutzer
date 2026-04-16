@@ -1,0 +1,32 @@
+info:
+  name: Angelegten Nutzer mit falschem ETag lesen
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: "{{restUrl}}/:id"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+    - name: If-None-Match
+      value: xxx
+  params:
+    - name: id
+      value: "{{createdNutzerId}}"
+      type: path
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.id
+      operator: eq
+      value: "{{createdNutzerId}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

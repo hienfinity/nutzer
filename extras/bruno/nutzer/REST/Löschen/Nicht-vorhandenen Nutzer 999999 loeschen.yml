@@ -1,0 +1,23 @@
+info:
+  name: Nicht-vorhandenen Nutzer 999999 loeschen
+  type: http
+  seq: 2
+
+http:
+  method: DELETE
+  url: "{{restUrl}}/999999"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "204"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

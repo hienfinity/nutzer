@@ -1,0 +1,98 @@
+info:
+  name: Angelegten Nutzer aendern
+  type: http
+  seq: 1
+
+http:
+  method: PUT
+  url: "{{restUrl}}/:id"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+    - name: If-Match
+      value: "{{currentVersionQuoted}}"
+    - name: Content-Type
+      value: application/json
+  params:
+    - name: id
+      value: "{{createdNutzerId}}"
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "vorname": "Alicia",
+        "nachname": "{{updatedNachname}}",
+        "email": "{{updatedEmail}}",
+        "telefonnummer": "654321",
+        "geburtsdatum": "2022-01-09",
+        "beitrittsdatum": "2024-01-09",
+        "aktiv": false,
+        "rolle": "NUTZER",
+        "status": "AKTIV"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrdVd0aHRLT0o2T2NtTnl4bG4xT1p2ZlJoUk5MX1ZCaEZuckhkeDdycTYwIn0.eyJleHAiOjE4MTk1NDM3NTYsImlhdCI6MTc3NjM0Mzc1NiwianRpIjoib25ydHJvOjM1NzI4MmZkLWVkMGYtMTkyMy02MTg0LTNhNThkMzAzYzM1MSIsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0Ojg4NDMvcmVhbG1zL3B5dGhvbiIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiJkOTZlZTI5MS1kMTI3LTRlMWItOWFmNy04MWYyOGU1NjlmY2IiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJweXRob24tY2xpZW50Iiwic2lkIjoiMlFHQlpkVmMzRS1rampCYWJmOTNXeG9IIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6W10sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLXB5dGhvbiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbInZpZXctcmVhbG0iLCJ2aWV3LWlkZW50aXR5LXByb3ZpZGVycyIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwicmVhbG0tYWRtaW4iLCJjcmVhdGUtY2xpZW50IiwibWFuYWdlLXVzZXJzIiwicXVlcnktcmVhbG1zIiwidmlldy1hdXRob3JpemF0aW9uIiwicXVlcnktY2xpZW50cyIsInF1ZXJ5LXVzZXJzIiwibWFuYWdlLWV2ZW50cyIsIm1hbmFnZS1yZWFsbSIsInZpZXctZXZlbnRzIiwidmlldy11c2VycyIsInZpZXctY2xpZW50cyIsIm1hbmFnZS1hdXRob3JpemF0aW9uIiwibWFuYWdlLWNsaWVudHMiLCJxdWVyeS1ncm91cHMiXX0sInB5dGhvbi1jbGllbnQiOnsicm9sZXMiOlsibnV0emVyIiwiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJQeXRob24gQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiIsImdpdmVuX25hbWUiOiJQeXRob24iLCJmYW1pbHlfbmFtZSI6IkFkbWluIiwiZW1haWwiOiJhZG1pbkBhY21lLmNvbSJ9.f7MUwzNKUs9fC_sUYrxttPQouMH6-TxNCJ0VZ760ns2ZrZ0fUiyr4XpF7gcp8oTFBqQRqjiNEM6knfeDuJF3bcw1Whfeyo6s-ZJqbiJBjSQL_xamsTnVIQkI6xQd6lZJMovxakRjYM-CwcolckyfsmAWW-e1L6vxaq36MHHZL0WKh1OJ4kSZHGZ7PPKPgALlfLP-BNEzsgpwNXQseqr7HIQWjNhCxkh1mQIm7Nwvr8CEl0AUTnnjVjb2mOG75NOG7m59nUQzHNJN5dhMZMXv1CiI2RSr2gCdNm37NwHhRlf6OIkvuCHExbXsc7zcz1ZByRhUn6R2wcBN2IYXt9b5_g
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        const id = bru.getVar('createdNutzerId') || '20';
+        const suffix = id.toString();
+        bru.setVar('updatedEmail', `bruno.updated.${suffix}@example.de`);
+        bru.setVar('updatedNachname', `Brunoupdate${suffix}`);
+        const token = bru.getVar('token');
+        if (!token) {
+          throw new Error('Kein Token vorhanden. Bitte zuerst den Login-Request ausfuehren.');
+        }
+        const restUrl = bru.interpolate('{{restUrl}}');
+        const getUrl = `${restUrl}/${id}`;
+
+        const lookupResponse = await bru.sendRequest({
+          method: 'GET',
+          url: getUrl,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!lookupResponse || lookupResponse.status !== 200) {
+          throw new Error(`Vorab-GET fuer Nutzer ${id} fehlgeschlagen. Status: ${lookupResponse?.status}`);
+        }
+
+        const etagHeader = lookupResponse?.headers?.etag || lookupResponse?.headers?.ETag;
+        const version = lookupResponse?.data?.version;
+        const etag = etagHeader || (version !== undefined && version !== null ? `"${version}"` : null);
+
+        if (!etag) {
+          throw new Error(`Keine Versionsinformation fuer Nutzer ${id} gefunden.`);
+        }
+
+        bru.setVar('currentVersionQuoted', etag);
+        req.setHeader('Authorization', `Bearer ${token}`);
+        req.setHeader('If-Match', etag);
+        req.setHeader('Content-Type', 'application/json');
+    - type: after-response
+      code: |-
+        const etag = res.headers.etag || res.headers.ETag;
+        if (etag) {
+          bru.setVar('currentVersionQuoted', etag);
+        }
+        if (res.status === 204) {
+          bru.setVar('currentEmail', bru.getVar('updatedEmail'));
+          bru.setVar('currentNachname', bru.getVar('updatedNachname'));
+        }
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "204"
+    - expression: res.body
+      operator: isEmpty
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

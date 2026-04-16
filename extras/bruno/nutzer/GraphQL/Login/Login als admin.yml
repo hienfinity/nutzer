@@ -1,0 +1,42 @@
+info:
+  name: Login als Admin
+  type: graphql
+  seq: 1
+
+graphql:
+  method: POST
+  url: "{{graphqlUrl}}"
+  body:
+    query: |-
+      mutation {
+        login(username: "{{username}}", password: "{{password}}") {
+          token
+          expiresIn
+          roles
+        }
+      }
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const token = res.getBody()?.data?.login?.token;
+        if (token) {
+          bru.setVar('token', token);
+          bru.setVar('graphqlToken', token);
+        }
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.data.login.token
+      operator: isString
+    - expression: res.body.data.login.roles[0]
+      operator: eq
+      value: ADMIN
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

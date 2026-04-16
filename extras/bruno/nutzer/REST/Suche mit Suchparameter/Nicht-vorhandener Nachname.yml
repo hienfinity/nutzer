@@ -1,0 +1,29 @@
+info:
+  name: Nicht-vorhandener Nachname
+  type: http
+  seq: 5
+
+http:
+  method: GET
+  url: "{{restUrl}}?nachname=Nichtvorhanden"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+    - name: Accept
+      value: application/json
+  params:
+    - name: nachname
+      value: Nichtvorhanden
+      type: query
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "404"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

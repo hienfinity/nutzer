@@ -1,0 +1,77 @@
+info:
+  name: Neuen Nutzer anlegen
+  type: graphql
+  seq: 1
+
+graphql:
+  method: POST
+  url: "{{graphqlUrl}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+  body:
+    query: |-
+      mutation {
+        create(
+          nutzerInput: {
+            vorname: "Max"
+            nachname: "{{graphqlNachname}}"
+            email: "{{graphqlEmail}}"
+            username: "{{graphqlUsername}}"
+            telefonnummer: "123456789"
+            geburtsdatum: "2000-01-01"
+            beitrittsdatum: "2024-01-01"
+            aktiv: true
+            rolle: NUTZER
+            status: AKTIV
+            interessen: [TECHNIK, SPORT]
+            adresse: {
+              strasse: "Teststrasse"
+              hausnummer: "10"
+              plz: "76133"
+              ort: "Karlsruhe"
+            }
+            einstellung: {
+              newsletterAktiv: true
+              benachrichtigungenAktiv: true
+              sprache: "de"
+            }
+          }
+        ) {
+          id
+        }
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        const suffix = Date.now().toString();
+        const nachname = `Graphql${suffix}`;
+        const email = `graphql.${suffix}@example.de`;
+        bru.setVar('graphqlNachname', nachname);
+        bru.setVar('graphqlEmail', email);
+        bru.setVar('graphqlUsername', `gql${suffix}`);
+        bru.setVar('currentNachname', nachname);
+        bru.setVar('currentEmail', email);
+        bru.setVar('currentNachnameTeil', 'graphql');
+    - type: after-response
+      code: |-
+        const id = res.getBody()?.data?.create?.id;
+        if (id) {
+          bru.setVar('createdNutzerId', `${id}`);
+        }
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.errors
+      operator: isEmpty
+    - expression: res.body.data.create.id
+      operator: isNumber
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

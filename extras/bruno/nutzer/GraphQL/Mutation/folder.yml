@@ -1,0 +1,11 @@
+info:
+  name: Mutation
+  type: folder
+  seq: 3
+
+request:
+  auth: inherit
+
+docs:
+  content: GraphQL-Mutations fuer create().
+  type: text/markdown

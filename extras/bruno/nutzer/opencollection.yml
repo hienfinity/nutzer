@@ -1,0 +1,53 @@
+opencollection: 1.0.0
+
+info:
+  name: nutzer
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  variables:
+    - name: baseUrl
+      value: https://127.0.0.1:8000
+    - name: baseUrl
+      value: https://localhost:8000
+      disabled: true
+    - name: baseUrl
+      value: http://localhost:8000
+      disabled: true
+    - name: authUrl
+      value: "{{baseUrl}}/auth"
+    - name: tokenUrl
+      value: "{{authUrl}}/token"
+    - name: restUrl
+      value: "{{baseUrl}}/rest"
+    - name: graphqlUrl
+      value: "{{baseUrl}}/graphql"
+    - name: healthUrl
+      value: "{{baseUrl}}/health"
+    - name: metricsUrl
+      value: "{{baseUrl}}/metrics"
+    - name: token
+      value: ""
+    - name: createdNutzerId
+      value: "20"
+    - name: currentVersionQuoted
+      value: "\"1\""
+    - name: currentEmail
+      value: "alice@example.de"
+    - name: currentNachname
+      value: "Anderson"
+    - name: currentNachnameTeil
+      value: "son"
+
+bundled: false
+extensions: {}

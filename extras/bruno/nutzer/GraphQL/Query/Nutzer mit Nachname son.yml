@@ -1,0 +1,59 @@
+info:
+  name: Suche id, version, ... von Nutzern mit Nachnamen
+  type: graphql
+  seq: 5
+
+graphql:
+  method: POST
+  url: "{{graphqlUrl}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+  body:
+    query: |-
+      {
+        nutzerListe(suchparameter: {nachname: "{{currentNachnameTeil}}"}) {
+          id
+          nachname
+          email
+        }
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        const nachname = bru.getVar('currentNachname') || '';
+        const fallback = bru.getVar('currentNachnameTeil') || 'son';
+        if (nachname.length >= 3) {
+          const teil = nachname.toLowerCase().includes('son')
+            ? 'son'
+            : nachname.slice(0, Math.min(5, nachname.length));
+          bru.setVar('currentNachnameTeil', teil);
+        } else {
+          bru.setVar('currentNachnameTeil', fallback);
+        }
+    - type: after-response
+      code: |-
+        const expected = bru.getVar('currentNachnameTeil')?.toLowerCase();
+        test('Body: Nachname enthaelt aktuellen Suchteil', () => {
+          res.getBody().data.nutzerListe.forEach(nutzer => {
+            expect(nutzer.nachname.toLowerCase()).to.contain(expected);
+          });
+        });
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.errors
+      operator: isEmpty
+    - expression: res.body.data.nutzerListe
+      operator: isArray
+    - expression: res.body.data.nutzerListe
+      operator: isNotEmpty
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
