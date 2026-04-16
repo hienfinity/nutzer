@@ -100,8 +100,6 @@ class NutzerWriteService:
             ):
                 raise UsernameExistsError(username)
 
-            # Beim Update bleibt der bestehende Username erhalten, weil er
-            # nicht Teil des Update-Request-Bodys ist.
             nutzer.username = nutzer_db.username
             nutzer_db.set(nutzer)
             if (
