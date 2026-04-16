@@ -7,6 +7,7 @@ import strawberry
 from fastapi import Request
 from loguru import logger
 from strawberry.fastapi import GraphQLRouter
+from graphql import GraphQLError
 from strawberry.types import Info
 
 from nutzer.config.graphql import graphql_ide
@@ -18,7 +19,7 @@ from nutzer.graphql_api.graphql_types import (
 )
 from nutzer.repository import NutzerRepository, Pageable
 from nutzer.router.nutzer_model import NutzerModel
-from nutzer.security import Role, TokenService, UserService
+from nutzer.security import AuthorizationError, Role, TokenService, UserService
 from nutzer.service import (
     NotFoundError,
     NutzerDTO,
@@ -39,6 +40,21 @@ _write_service: Final = NutzerWriteService(
 _token_service: Final = TokenService()
 
 
+def _get_user(info: Info):
+    request: Final[Request] = info.context["request"]
+    try:
+        return _token_service.get_user_from_request(request=request)
+    except AuthorizationError as err:
+        raise GraphQLError("Unauthorized") from err
+
+
+def _require_roles(info: Info, *roles: Role):
+    user = _get_user(info)
+    if not any(role in user.roles for role in roles):
+        raise GraphQLError("Forbidden")
+    return user
+
+
 @strawberry.type
 class Query:
     """Queries, um Nutzerdaten zu lesen."""
@@ -48,14 +64,12 @@ class Query:
         """Daten zu einem Nutzer lesen."""
         logger.debug("nutzer_id={}", nutzer_id)
 
-        request: Final[Request] = info.context.get("request")
-        user: Final = _token_service.get_user_from_request(request=request)
-        if user is None:
-            return None
+        user = _require_roles(info, Role.ADMIN, Role.NUTZER)
+        logger.debug("current_user={}", user)
 
         try:
             nutzer_dto: Final = _service.find_by_id(nutzer_id=int(nutzer_id))
-        except NotFoundError:
+        except (NotFoundError, ValueError):
             return None
 
         logger.debug("{}", nutzer_dto)
@@ -70,10 +84,8 @@ class Query:
         """Nutzer anhand von Suchparametern suchen."""
         logger.debug("suchparameter={}", suchparameter)
 
-        request: Final[Request] = info.context["request"]
-        user: Final = _token_service.get_user_from_request(request)
-        if user is None or Role.ADMIN not in user.roles:
-            return []
+        user = _require_roles(info, Role.ADMIN)
+        logger.debug("current_user={}", user)
 
         suchparameter_dict: Final[dict[str, str | None]] = dict(vars(suchparameter))
         suchparameter_filtered = {
@@ -100,9 +112,11 @@ class Mutation:
     """Mutations, um Nutzerdaten zu schreiben oder Tokens zu lesen."""
 
     @strawberry.mutation
-    def create(self, nutzer_input: NutzerInput) -> CreatePayload:
+    def create(self, nutzer_input: NutzerInput, info: Info) -> CreatePayload:
         """Einen neuen Nutzer anlegen."""
         logger.debug("nutzer_input={}", nutzer_input)
+        user = _require_roles(info, Role.ADMIN)
+        logger.debug("current_user={}", user)
 
         nutzer_dict = nutzer_input.__dict__
         nutzer_dict["adresse"] = nutzer_input.adresse.__dict__
