@@ -3,7 +3,7 @@
 from collections.abc import Awaitable, Callable
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Final
+from typing import Any, Final, cast
 
 from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.gzip import GZipMiddleware
@@ -43,7 +43,7 @@ app: Final = FastAPI(
 )
 
 Instrumentator().instrument(app).expose(app)
-app.add_middleware(GZipMiddleware, minimum_size=500)
+app.add_middleware(cast(Any, GZipMiddleware), minimum_size=500)
 app.include_router(nutzer_router, prefix="/rest")
 app.include_router(nutzer_write_router, prefix="/rest")
 app.include_router(auth_router, prefix="/auth")

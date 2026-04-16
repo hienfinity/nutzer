@@ -1,7 +1,7 @@
 """Unit-Tests fuer create() von NutzerWriteService."""
 
 from datetime import date
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from pytest import fixture, mark, raises
 
@@ -113,7 +113,7 @@ def test_create_username_exists(nutzer_write_service, session_mock) -> None:
 def test_create_username_none(nutzer_write_service, session_mock) -> None:
     # Arrange
     nutzer = _create_nutzer()
-    nutzer.username = None
+    nutzer.username = cast(str, None)
 
     # exists_email(...) -> False
     session_mock.scalar.side_effect = [0]

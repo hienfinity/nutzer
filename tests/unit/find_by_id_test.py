@@ -2,7 +2,7 @@
 
 from dataclasses import asdict
 from datetime import date
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 from pytest import fixture, mark, raises
 
@@ -70,7 +70,7 @@ def test_find_by_id(nutzer_service, session_mock) -> None:
 
     nutzer_dto_mock = NutzerDTO(nutzer_mock)
     session_mock.commit.return_value = None
-    nutzer_service.repo.find_by_id = lambda nutzer_id, session: nutzer_mock
+    cast(Any, nutzer_service.repo).find_by_id = lambda nutzer_id, session: nutzer_mock
 
     # Act
     nutzer_dto = nutzer_service.find_by_id(nutzer_id=nutzer_id)
@@ -87,7 +87,7 @@ def test_find_by_id_not_found(
 ) -> None:
     # Arrange
     nutzer_id = 999
-    nutzer_service.repo.find_by_id = lambda nutzer_id, session: None
+    cast(Any, nutzer_service.repo).find_by_id = lambda nutzer_id, session: None
 
     # Act
     with raises(NotFoundError) as err:

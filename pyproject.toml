@@ -86,7 +86,7 @@ preview = true
 
 [tool.ty.environment]
 python = "./.venv"
-root = ["./src"]
+root = ["./src", "./tests/integration", "./tests"]
 
 [tool.uv]
 default-groups = "all"

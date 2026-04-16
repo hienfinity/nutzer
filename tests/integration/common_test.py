@@ -2,7 +2,7 @@
 
 from collections.abc import Mapping
 from datetime import date
-from typing import Any, Final
+from typing import Any, Final, cast
 
 from fastapi.testclient import TestClient
 
@@ -230,10 +230,11 @@ class StubWriteService:
 
         nutzer.id = 1001
         nutzer.version = 0
+        nutzer_id = 1001
         if nutzer.adresse is not None:
-            nutzer.adresse.nutzer_id = nutzer.id
+            cast(Any, nutzer.adresse).nutzer_id = nutzer_id
         if nutzer.einstellung is not None:
-            nutzer.einstellung.nutzer_id = nutzer.id
+            cast(Any, nutzer.einstellung).nutzer_id = nutzer_id
         return NutzerDTO(nutzer)
 
     def update(self, nutzer: Nutzer, nutzer_id: int, version: int) -> NutzerDTO:
@@ -336,9 +337,9 @@ def _request(method: str, url: str, **kwargs: Any) -> Any:
     app.dependency_overrides[get_service] = lambda: StubReadService(nutzer)
     app.dependency_overrides[get_write_service] = lambda: StubWriteService(nutzer)
     app.dependency_overrides[get_token_service] = lambda: token_service
-    graphql_schema._service = StubReadService(nutzer)
-    graphql_schema._write_service = StubWriteService(nutzer)
-    graphql_schema._token_service = token_service
+    cast(Any, graphql_schema)._service = StubReadService(nutzer)
+    cast(Any, graphql_schema)._write_service = StubWriteService(nutzer)
+    cast(Any, graphql_schema)._token_service = token_service
 
     try:
         with TestClient(app) as client:

@@ -50,7 +50,7 @@ class NutzerDTO:
         self.aktiv = nutzer.aktiv
         self.rolle = nutzer.rolle
         self.status = nutzer.status
-        self.interessen = list(nutzer.interessen)
+        self.interessen = list(nutzer.interessen or [])
         self.adresse = AdresseDTO(nutzer.adresse) if nutzer.adresse else None
         self.einstellung = EinstellungDTO(nutzer.einstellung) if nutzer.einstellung else None
         self.erzeugt = nutzer.erzeugt
