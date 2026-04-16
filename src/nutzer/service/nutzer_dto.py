@@ -30,8 +30,8 @@ class NutzerDTO:
     rolle: Rolle
     status: Status
     interessen: list[Interesse]
-    adresse: AdresseDTO
-    einstellung: EinstellungDTO
+    adresse: AdresseDTO | None
+    einstellung: EinstellungDTO | None
     erzeugt: datetime | None
     aktualisiert: datetime | None
 
@@ -51,7 +51,7 @@ class NutzerDTO:
         self.rolle = nutzer.rolle
         self.status = nutzer.status
         self.interessen = list(nutzer.interessen)
-        self.adresse = AdresseDTO(nutzer.adresse)
-        self.einstellung = EinstellungDTO(nutzer.einstellung)
+        self.adresse = AdresseDTO(nutzer.adresse) if nutzer.adresse else None
+        self.einstellung = EinstellungDTO(nutzer.einstellung) if nutzer.einstellung else None
         self.erzeugt = nutzer.erzeugt
         self.aktualisiert = nutzer.aktualisiert
