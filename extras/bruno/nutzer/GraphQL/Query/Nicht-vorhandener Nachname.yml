@@ -1,0 +1,36 @@
+info:
+  name: Nicht-vorhandener Nachname
+  type: graphql
+  seq: 6
+
+graphql:
+  method: POST
+  url: "{{graphqlUrl}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+  body:
+    query: |-
+      {
+        nutzerListe(suchparameter: {nachname: "Nichtvorhanden"}) {
+          id
+        }
+      }
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.errors
+      operator: isEmpty
+    - expression: res.body.data.nutzerListe
+      operator: isArray
+    - expression: res.body.data.nutzerListe
+      operator: isEmpty
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

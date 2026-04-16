@@ -29,6 +29,7 @@ dependencies = [
     "requests==2.32.5",
     "SQLAlchemy>=2.0.48",
     "starlette>=0.52.1",
+    "strawberry-graphql>=0.311.1",
     "tabulate>=0.10.0",
     "urllib3>=2.6.3",
     "uvicorn>=0.41.0",
@@ -55,8 +56,25 @@ dev = [
 
 [tool.pytest.ini_options]
 minversion = "8.4.1"
-pythonpath = ["src"]
+pythonpath = ["src", "tests/integration"]
+testpaths = ["tests/integration", "tests/unit"]
 addopts = "--html=report.html --cov --cov-report=html"
+markers = [
+    "graphql: GraphQL-Integrationstests",
+    "query: GraphQL-Queries",
+    "mutation: GraphQL-Mutations",
+    "login: Tests fuer Login",
+    "rest: REST-Integrationstests",
+    "get_request: Tests fuer HTTP GET",
+    "post_request: Tests fuer HTTP POST",
+    "put_request: Tests fuer HTTP PUT",
+    "delete_request: Tests fuer HTTP DELETE",
+    "health: Health-Checks",
+    "unit: Unit-Tests",
+    "unit_find: Unit-Tests fuer find()",
+    "unit_find_by_id: Unit-Tests fuer find_by_id()",
+    "unit_create: Unit-Tests fuer create()",
+]
 
 [tool.pytest_env]
 
@@ -68,7 +86,7 @@ preview = true
 
 [tool.ty.environment]
 python = "./.venv"
-root = ["./src"]
+root = ["./src", "./tests/integration", "./tests"]
 
 [tool.uv]
 default-groups = "all"

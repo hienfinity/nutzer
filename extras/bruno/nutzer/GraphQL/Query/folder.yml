@@ -1,0 +1,11 @@
+info:
+  name: Query
+  type: folder
+  seq: 2
+
+request:
+  auth: inherit
+
+docs:
+  content: GraphQL-Queries mit Bearer-Token aus dem Request `GraphQL/Login/Login als admin`.
+  type: text/markdown

@@ -17,7 +17,7 @@
 
 """Python-Script, um den Scanner für SonarQube aufzurufen."""
 
-import subprocess  # noqa: S404
+import subprocess
 from pathlib import Path
 from sysconfig import get_platform
 
@@ -53,4 +53,4 @@ def ermittle_scanner_pfad(basis: Path) -> Path:
 script = ermittle_scanner_pfad(base_path)
 
 if __name__ == "__main__":
-    subprocess.run(f"{script} -X", shell=True)  # noqa: PLW1510, S602
+    subprocess.run(f"{script} -X", shell=True)  # noqa: PLW1510

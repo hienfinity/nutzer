@@ -1,0 +1,59 @@
+info:
+  name: Neuer Nutzer mit ungueltigen Daten
+  type: graphql
+  seq: 2
+
+graphql:
+  method: POST
+  url: "{{graphqlUrl}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+  body:
+    query: |-
+      mutation {
+        create(
+          nutzerInput: {
+            vorname: ""
+            nachname: ""
+            email: "falsche_email@"
+            username: ""
+            telefonnummer: "123"
+            geburtsdatum: "2000-01-01"
+            beitrittsdatum: "2024-01-01"
+            aktiv: true
+            rolle: NUTZER
+            status: AKTIV
+            interessen: [TECHNIK]
+            adresse: {
+              strasse: ""
+              hausnummer: ""
+              plz: ""
+              ort: ""
+            }
+            einstellung: {
+              newsletterAktiv: true
+              benachrichtigungenAktiv: true
+              sprache: ""
+            }
+          }
+        ) {
+          id
+        }
+      }
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.data
+      operator: isNull
+    - expression: res.body.errors
+      operator: isArray
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

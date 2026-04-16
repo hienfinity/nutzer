@@ -1,4 +1,4 @@
-# Copyright (C) 2024 - present, Juergen Zimmermann, Hochschule Karlsruhe  # noqa: D100
+# Copyright (C) 2024 - present, Juergen Zimmermann, Hochschule Karlsruhe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ cafile = (
 )
 ssl_context = create_default_context(cafile=str(cafile))
 
-token_url = "https://localhost:8000/auth/token"  # noqa: S105
+token_url = "https://localhost:8000/auth/token"
 token_dict = {
     "username": "admin",
     "password": "p",
@@ -48,7 +48,7 @@ token_dict = {
 token_data = dumps(token_dict).encode("utf-8")
 # https://docs.python.org/3/library/urllib.request.html#request-objects
 token_request = Request(token_url, data=token_data, method="POST")
-with urlopen(token_request, context=ssl_context) as response:  # noqa: S310
+with urlopen(token_request, context=ssl_context) as response:
     body_text = response.read().decode("utf-8")
     token = loads(body_text)["token"]
     print(f"token={token}")
@@ -82,7 +82,7 @@ while index >= 1:
 
     # https://docs.python.org/3/library/urllib.request.html
     try:
-        response = urlopen(request, context=ssl_context)  # noqa: S310
+        response = urlopen(request, context=ssl_context)
     except HTTPError as e:
         print(f"Fehler bei id={nutzer_id}: code={e.code}")
         continue

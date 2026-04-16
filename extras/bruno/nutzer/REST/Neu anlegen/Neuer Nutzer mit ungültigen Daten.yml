@@ -1,0 +1,52 @@
+info:
+  name: Neuer Nutzer mit ungueltigen Daten
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{restUrl}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "vorname": "",
+        "nachname": "",
+        "email": "falsche_email@",
+        "username": "xxxxxxxxxxxxxxxxxxxxx",
+        "telefonnummer": "123456",
+        "geburtsdatum": "2022-02-01",
+        "beitrittsdatum": "2024-01-01",
+        "aktiv": true,
+        "rolle": "INVALID",
+        "status": "AKTIV",
+        "interessen": ["TECHNIK"],
+        "adresse": {
+          "strasse": "",
+          "hausnummer": "",
+          "plz": "",
+          "ort": ""
+        },
+        "einstellung": {
+          "newsletter_aktiv": true,
+          "benachrichtigungen_aktiv": true,
+          "sprache": ""
+        }
+      }
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "422"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

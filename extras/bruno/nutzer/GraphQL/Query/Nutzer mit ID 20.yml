@@ -1,0 +1,47 @@
+info:
+  name: Suche nachname, email, ... vom Nutzer mit ID 20
+  type: graphql
+  seq: 1
+
+graphql:
+  method: POST
+  url: "{{graphqlUrl}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+  body:
+    query: |-
+      {
+        nutzer(nutzerId: "{{createdNutzerId}}") {
+          id
+          version
+          vorname
+          nachname
+          email
+          username
+        }
+      }
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const version = res.getBody()?.data?.nutzer?.version;
+        if (version !== undefined && version !== null) {
+          bru.setVar('currentVersionQuoted', `"${version}"`);
+        }
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.errors
+      operator: isEmpty
+    - expression: res.body.data.nutzer.id
+      operator: eq
+      value: "{{createdNutzerId}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

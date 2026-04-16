@@ -1,0 +1,143 @@
+"""Unit-Tests fuer create() von NutzerWriteService."""
+
+from datetime import date
+from typing import TYPE_CHECKING, cast
+
+from pytest import fixture, mark, raises
+
+from nutzer.entity import Adresse, Einstellung, Interesse, Nutzer, Rolle, Status
+from nutzer.service import EmailExistsError, UsernameExistsError
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
+
+
+@fixture
+def session_mock(mocker: MockerFixture):
+    session = mocker.Mock()
+    # Patching von "with Session() as session:" in nutzer_write_service.py
+    mocker.patch(
+        "nutzer.service.nutzer_write_service.Session",
+        return_value=mocker.MagicMock(
+            __enter__=lambda self: session,
+            __exit__=lambda self, exc_type, exc, tb: None,
+        ),
+    )
+    return session
+
+
+def _create_nutzer() -> Nutzer:
+    adresse = Adresse(
+        id=999,
+        strasse="Mockstrasse",
+        hausnummer="1a",
+        plz="11111",
+        ort="Mockort",
+        nutzer_id=None,
+        nutzer=None,
+    )
+    einstellung = Einstellung(
+        id=999,
+        newsletter_aktiv=True,
+        benachrichtigungen_aktiv=True,
+        sprache="de",
+        nutzer_id=None,
+        nutzer=None,
+    )
+    nutzer = Nutzer(
+        id=None,
+        vorname="Max",
+        nachname="Mocktest",
+        email="mock@email.test",
+        username="mocktest",
+        telefonnummer="123456789",
+        geburtsdatum=date(2000, 1, 1),
+        beitrittsdatum=date(2025, 1, 31),
+        aktiv=True,
+        rolle=Rolle.NUTZER,
+        status=Status.AKTIV,
+        adresse=adresse,
+        einstellung=einstellung,
+        interessen=[Interesse.TECHNIK],
+    )
+    adresse.nutzer = nutzer
+    einstellung.nutzer = nutzer
+    return nutzer
+
+
+@mark.unit
+@mark.unit_create
+def test_create(nutzer_write_service, session_mock) -> None:
+    # Arrange
+    nutzer = _create_nutzer()
+    generierte_id = 1
+
+    session_mock.add.return_value = None
+    session_mock.commit.return_value = None
+    # exists_email(...) -> False, exists_username(...) -> False
+    session_mock.scalar.side_effect = [0, None]
+
+    def flush_side_effect(objects=None):
+        for obj in objects or []:
+            obj.id = generierte_id  # Emulation: generierter PK in session.flush()
+
+    session_mock.flush.side_effect = flush_side_effect
+
+    # Act
+    nutzer_dto = nutzer_write_service.create(nutzer=nutzer)
+
+    # Assert
+    assert nutzer_dto.id == generierte_id
+
+
+@mark.unit
+@mark.unit_create
+def test_create_username_exists(nutzer_write_service, session_mock) -> None:
+    # Arrange
+    nutzer = _create_nutzer()
+
+    # exists_email(...) -> False
+    # exists_username(...) -> True
+    session_mock.scalar.side_effect = [0, "mocktest"]
+
+    # Act
+    with raises(UsernameExistsError) as err:
+        nutzer_write_service.create(nutzer=nutzer)
+
+    # Assert
+    assert err.type == UsernameExistsError
+
+
+@mark.unit
+@mark.unit_create
+def test_create_username_none(nutzer_write_service, session_mock) -> None:
+    # Arrange
+    nutzer = _create_nutzer()
+    nutzer.username = cast(str, None)
+
+    # exists_email(...) -> False
+    session_mock.scalar.side_effect = [0]
+
+    # Act
+    with raises(ValueError) as err:
+        nutzer_write_service.create(nutzer=nutzer)
+
+    # Assert
+    assert err.type == ValueError
+
+
+@mark.unit
+@mark.unit_create
+def test_create_email_exists(nutzer_write_service, session_mock) -> None:
+    # Arrange
+    nutzer = _create_nutzer()
+
+    # exists_email(...) -> True
+    session_mock.scalar.return_value = 1
+
+    # Act
+    with raises(EmailExistsError) as err:
+        nutzer_write_service.create(nutzer=nutzer)
+
+    # Assert
+    assert err.type == EmailExistsError

@@ -1,0 +1,41 @@
+info:
+  name: Nutzer 40 mit ungueltigen Daten aendern
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: "{{restUrl}}/40"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+    - name: Content-Type
+      value: application/json
+    - name: If-Match
+      value: '"0"'
+  body:
+    type: json
+    data: |-
+      {
+        "vorname": "",
+        "nachname": "",
+        "email": "falsche_email_put@",
+        "telefonnummer": "654321",
+        "geburtsdatum": "2022-02-04",
+        "beitrittsdatum": "2024-02-04",
+        "aktiv": false,
+        "rolle": "UNGUELTIG",
+        "status": "AKTIV"
+      }
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "422"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

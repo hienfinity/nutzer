@@ -19,7 +19,8 @@
 
 """Python-Script, um OWASP Dependency Check aufzurufen."""
 
-import subprocess  # noqa: S404
+import subprocess
+from os import environ
 from pathlib import Path
 from sysconfig import get_platform
 
@@ -40,13 +41,48 @@ else:
 script = base_exec_path / "dependency-check" / "bin" / base_script
 print(f"script={script}")
 
+project_root = Path(__file__).resolve().parent.parent
 data_path = base_data_path / "dependency-check-data"
-pyproject_path = Path("..")
-report_path = "."
+scan_path = project_root
+report_path = project_root / "extras"
+suppression_path = project_root / "extras" / "suppression.xml"
+
+
+def ermittle_java_pfad() -> Path | None:
+    java_home = environ.get("JAVA_HOME")
+    if java_home:
+        java_path = Path(java_home) / "bin" / "java.exe"
+        if java_path.exists():
+            return java_path
+
+    kandidaten = (
+        Path("C:/Program Files/Java"),
+        Path("C:/Program Files/Eclipse Adoptium"),
+        Path.home() / ".sonar" / "cache",
+        Path.home() / ".vscode" / "extensions",
+        Path.home() / ".antigravity" / "extensions",
+    )
+    for basis in kandidaten:
+        if not basis.exists():
+            continue
+        java_dateien = sorted(basis.rglob("java.exe"), reverse=True)
+        if java_dateien:
+            return java_dateien[0]
+
+    return None
+
+
+java_path = ermittle_java_pfad()
+if java_path is None:
+    msg = (
+        "Keine Java-Laufzeit gefunden. "
+        "Bitte JAVA_HOME setzen oder ein JDK/JRE installieren."
+    )
+    raise RuntimeError(msg)
 
 options = " ".join([
-    f"--nvdApiKey {nvd_api_key} --project {project} --scan {pyproject_path}",
-    f"--suppression extras/suppression.xml --out {report_path} --data {data_path}",
+    f'--nvdApiKey {nvd_api_key} --project {project} --scan "{scan_path}"',
+    f'--suppression "{suppression_path}" --out "{report_path}" --data "{data_path}"',
     # dependency-check.bat --advancedHelp
     "--disableArchive",
     "--disableAssembly",
@@ -82,4 +118,8 @@ options = " ".join([
 print(f"options={options}")
 print()
 
-subprocess.run(f"{script} {options}", shell=True)  # noqa: PLW1510, S602
+env = environ.copy()
+env["JAVA_HOME"] = str(java_path.parent.parent)
+env["PATH"] = f"{java_path.parent};{env.get('PATH', '')}"
+
+subprocess.run(f'"{script}" {options}', shell=True, check=True, env=env)  # noqa: PLW1510

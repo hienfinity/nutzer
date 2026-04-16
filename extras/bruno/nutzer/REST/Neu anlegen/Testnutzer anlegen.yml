@@ -1,0 +1,87 @@
+info:
+  name: Testnutzer anlegen
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{restUrl}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "vorname": "Bruno",
+        "nachname": "{{currentNachname}}",
+        "email": "{{currentEmail}}",
+        "username": "{{generatedUsername}}",
+        "telefonnummer": "123456",
+        "geburtsdatum": "2022-02-01",
+        "beitrittsdatum": "2024-01-01",
+        "aktiv": true,
+        "rolle": "NUTZER",
+        "status": "AKTIV",
+        "interessen": ["TECHNIK"],
+        "adresse": {
+          "strasse": "Restweg",
+          "hausnummer": "1",
+          "plz": "99999",
+          "ort": "Restort"
+        },
+        "einstellung": {
+          "newsletter_aktiv": true,
+          "benachrichtigungen_aktiv": true,
+          "sprache": "de"
+        }
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        const suffix = Date.now().toString();
+        bru.setVar('generatedUsername', `bruno${suffix}`);
+        bru.setVar('currentEmail', `bruno.${suffix}@example.de`);
+        bru.setVar('currentNachname', `Brunoson${suffix}`);
+        bru.setVar('currentNachnameTeil', 'son');
+    - type: after-response
+      code: |-
+        const location = res.headers.location || res.headers.Location;
+        if (location) {
+          const id = location.split('/').pop();
+          if (id) {
+            bru.setVar('createdNutzerId', id);
+          }
+        }
+        if (res.status === 201 && location) {
+          const token = bru.getVar('token');
+          if (token) {
+            const lookupResponse = await bru.sendRequest({
+              method: 'GET',
+              url: location,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const etag = lookupResponse?.headers?.etag || lookupResponse?.headers?.ETag;
+            if (etag) {
+              bru.setVar('currentVersionQuoted', etag);
+            }
+          }
+        }
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "201"
+    - expression: res.headers.location || res.headers.Location
+      operator: isString
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

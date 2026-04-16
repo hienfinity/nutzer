@@ -1,0 +1,9 @@
+info:
+  name: REST
+  type: folder
+  seq: 3
+
+request:
+  variables:
+    - name: restUrl
+      value: "{{baseUrl}}/rest"

@@ -1,0 +1,23 @@
+info:
+  name: Nutzer 60 loeschen
+  type: http
+  seq: 1
+
+http:
+  method: DELETE
+  url: "{{restUrl}}/60"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "204"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

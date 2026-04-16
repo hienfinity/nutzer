@@ -1,0 +1,29 @@
+info:
+  name: Shutdown
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{baseUrl}}/shutdown"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.headers['content-type']
+      operator: contains
+      value: application/json
+    - expression: res.body.message
+      operator: matches
+      value: ^Server is shutting down
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

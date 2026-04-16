@@ -1,0 +1,11 @@
+info:
+  name: Loeschen
+  type: folder
+  seq: 6
+
+request:
+  auth: inherit
+
+docs:
+  content: Nutzer ueber REST loeschen.
+  type: text/markdown

@@ -1,0 +1,29 @@
+info:
+  name: Vorhandene ID 20 mit If-None-Match
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{restUrl}}/:id"
+  headers:
+    - name: Authorization
+      value: Bearer {{token}}
+    - name: If-None-Match
+      value: "{{currentVersionQuoted}}"
+  params:
+    - name: id
+      value: "{{createdNutzerId}}"
+      type: path
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "304"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

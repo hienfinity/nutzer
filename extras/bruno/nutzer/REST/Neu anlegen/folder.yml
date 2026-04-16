@@ -1,0 +1,11 @@
+info:
+  name: Neu anlegen
+  type: folder
+  seq: 4
+
+request:
+  auth: inherit
+
+docs:
+  content: Neue Nutzer ueber REST anlegen. Der erste Request legt einen Testnutzer an und speichert ID, Email, Nachname und Version fuer die Folge-Requests.
+  type: text/markdown
