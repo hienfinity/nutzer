@@ -105,7 +105,7 @@ def email_exists_error_handler(
 ) -> Response:
     """ProblemDetails fuer doppelte Emailadressen zurueckgeben."""
     return create_problem_details(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         detail=str(err),
     )
 
@@ -117,7 +117,7 @@ def username_exists_error_handler(
 ) -> Response:
     """ProblemDetails fuer doppelte Benutzernamen zurueckgeben."""
     return create_problem_details(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         detail=str(err),
     )
 

@@ -96,7 +96,7 @@ def test_post_invalid() -> None:
     )
 
     # assert
-    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
     body = response.text
     assert "vorname" in body
     assert "nachname" in body
@@ -146,7 +146,7 @@ def test_post_email_exists() -> None:
     )
 
     # assert
-    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
     assert "Email already exists" in response.text
 
 
@@ -167,4 +167,4 @@ def test_post_invalid_json() -> None:
     )
 
     # assert
-    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
