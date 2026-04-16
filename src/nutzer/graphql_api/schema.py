@@ -5,9 +5,9 @@ from typing import Final
 
 import strawberry
 from fastapi import Request
+from graphql import GraphQLError
 from loguru import logger
 from strawberry.fastapi import GraphQLRouter
-from graphql import GraphQLError
 from strawberry.types import Info
 
 from nutzer.config.graphql import graphql_ide

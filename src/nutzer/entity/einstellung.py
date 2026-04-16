@@ -7,7 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from nutzer.entity.base import Base
 
-
+if TYPE_CHECKING:
+    from nutzer.entity.nutzer import Nutzer
 
 
 class Einstellung(Base):

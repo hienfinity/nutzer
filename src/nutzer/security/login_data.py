@@ -16,6 +16,7 @@
 """Data class für die Login-Daten."""
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 __all__ = ["LoginData"]
 
@@ -33,7 +34,7 @@ class LoginData:
         """Beispiel für OpenAPI."""
 
         # https://fastapi.tiangolo.com/tutorial/schema-extra-example
-        json_schema_extra = {
+        json_schema_extra: ClassVar[dict[str, dict[str, str]]] = {
             "example": {
                 "username": "admin",
                 "password": "p",  # NOSONAR

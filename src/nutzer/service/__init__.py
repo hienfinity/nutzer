@@ -14,8 +14,8 @@ from nutzer.service.nutzer_write_service import NutzerWriteService
 
 __all__ = [
     "AdresseDTO",
-    "EmailExistsError",
     "EinstellungDTO",
+    "EmailExistsError",
     "NotFoundError",
     "NutzerDTO",
     "NutzerService",

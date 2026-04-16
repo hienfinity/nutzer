@@ -22,7 +22,7 @@ class Pageable:
     """Seitennummer."""
 
     @staticmethod
-    def create(number: str | None = None, size: str | None = None) -> "Pageable":
+    def create(number: str | None = None, size: str | None = None) -> Pageable:
         """Ein Pageable-Objekt aus String-Eingaben erzeugen."""
         number_int: Final = (
             DEFAULT_PAGE_NUMBER

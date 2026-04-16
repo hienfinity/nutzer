@@ -19,7 +19,7 @@
 
 """Python-Script, um OWASP Dependency Check aufzurufen."""
 
-import subprocess  # noqa: S404
+import subprocess
 from pathlib import Path
 from sysconfig import get_platform
 
@@ -82,4 +82,4 @@ options = " ".join([
 print(f"options={options}")
 print()
 
-subprocess.run(f"{script} {options}", shell=True)  # noqa: PLW1510, S602
+subprocess.run(f"{script} {options}", shell=True)  # noqa: PLW1510

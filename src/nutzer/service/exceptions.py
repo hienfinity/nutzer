@@ -1,8 +1,8 @@
 """Exceptions in der Geschaeftslogik von Nutzer."""
 
 __all__ = [
-    "NotFoundError",
     "EmailExistsError",
+    "NotFoundError",
     "UsernameExistsError",
     "VersionOutdatedError",
 ]

@@ -4,9 +4,9 @@ from datetime import date
 from typing import Annotated, Any
 
 from loguru import logger
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, EmailStr, StringConstraints
 
-from nutzer.entity import Rolle, Status, Nutzer
+from nutzer.entity import Nutzer, Rolle, Status
 
 __all__ = ["NutzerUpdateModel"]
 

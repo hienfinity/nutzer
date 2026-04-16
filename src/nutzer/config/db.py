@@ -16,7 +16,7 @@
 """DB-URL erstellen."""
 
 from importlib.resources import files
-from typing import TYPE_CHECKING, Final, Literal
+from typing import TYPE_CHECKING, Final
 
 from loguru import logger
 from sqlalchemy.engine import URL
@@ -36,7 +36,7 @@ __all__ = [
 
 _db_toml: Final = app_config.get("db", {})
 
-db_dialect: Final[Literal["postgresql"]] = _db_toml.get(
+db_dialect: Final = _db_toml.get(
     "dialect",
     "postgresql",
 )

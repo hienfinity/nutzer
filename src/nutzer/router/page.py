@@ -2,17 +2,14 @@
 
 from dataclasses import dataclass
 from math import ceil
-from typing import Generic, TypeVar
 
 from nutzer.repository.pageable import Pageable
 
 __all__ = ["Page"]
 
-T = TypeVar("T")
-
 
 @dataclass(slots=True, kw_only=True)
-class Page(Generic[T]):
+class Page[T]:
     """Page fuer paginierte Ergebnisse."""
 
     content: tuple[T, ...]
@@ -26,7 +23,7 @@ class Page(Generic[T]):
         content: tuple[T, ...],
         pageable: Pageable,
         total_elements: int,
-    ) -> "Page[T]":
+    ) -> Page[T]:
         """Erzeuge eine Page auf Basis von Content, Pageable und Gesamtanzahl."""
         size = pageable.size
         total_pages = ceil(total_elements / size) if size > 0 else 1
