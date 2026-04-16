@@ -52,7 +52,7 @@ host = "localhost"
 port = 8843
 realm = "python"
 client-id = "python-client"
-client-secret = "eOo2VMPt3OLQC9FCMSvyG0YZLbR8ahWj"
+client-secret = "aUXsRsY8I92yikBPzgBoegBAJo114KUd"
 admin = "admin"
 admin-password = "p"
 
