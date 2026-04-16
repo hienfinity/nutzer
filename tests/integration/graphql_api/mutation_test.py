@@ -3,7 +3,7 @@
 from http import HTTPStatus
 from typing import Final
 
-from common_test import ctx, graphql_url, post
+from common_test import auth_headers, ctx, graphql_url, post
 from pytest import mark
 
 
@@ -11,6 +11,7 @@ from pytest import mark
 @mark.mutation
 def test_create() -> None:
     # arrange
+    headers: Final = auth_headers()
     query: Final = {
         "query": """
             mutation {
@@ -47,7 +48,7 @@ def test_create() -> None:
     }
 
     # act
-    response: Final = post(graphql_url, json=query, verify=ctx)
+    response: Final = post(graphql_url, json=query, headers=headers, verify=ctx)
 
     # assert
     assert response is not None
@@ -62,6 +63,7 @@ def test_create() -> None:
 @mark.mutation
 def test_create_invalid() -> None:
     # arrange
+    headers: Final = auth_headers()
     query: Final = {
         "query": """
             mutation {
@@ -98,7 +100,7 @@ def test_create_invalid() -> None:
     }
 
     # act
-    response: Final = post(graphql_url, json=query, verify=ctx)
+    response: Final = post(graphql_url, json=query, headers=headers, verify=ctx)
 
     # assert
     assert response.status_code == HTTPStatus.OK
