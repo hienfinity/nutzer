@@ -1,3 +1,4 @@
+NUTZER_ID_LOG: Final = "nutzer_id={}"  # Logging-Template für Nutzer-IDs
 
 """Repository fuer persistente Nutzerdaten."""
 
@@ -25,7 +26,7 @@ class NutzerRepository:
         :return: Der gefundene Nutzer oder None
         :rtype: Nutzer | None
         """
-        logger.debug("nutzer_id={}", nutzer_id)
+        logger.debug(NUTZER_ID_LOG, nutzer_id)
 
         if nutzer_id is None:
             return None
@@ -292,7 +293,7 @@ class NutzerRepository:
 
         session.add(instance=nutzer)
         session.flush(objects=[nutzer])
-        logger.debug("nutzer_id={}", nutzer.id)
+        logger.debug(NUTZER_ID_LOG, nutzer.id)
         return nutzer
 
 
@@ -318,7 +319,7 @@ class NutzerRepository:
         :param nutzer_id: Die ID des zu löschenden Nutzers
         :param session: Session für SQLAlchemy
         """
-        logger.debug("nutzer_id={}", nutzer_id)
+        logger.debug(NUTZER_ID_LOG, nutzer_id)
 
         if (nutzer := self.find_by_id(nutzer_id=nutzer_id, session=session)) is None:
             return
