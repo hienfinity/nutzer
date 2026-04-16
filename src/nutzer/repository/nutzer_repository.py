@@ -1,3 +1,4 @@
+EMAIL_LOG: Final = "email={}"  # Logging-Template für Email
 NUTZER_ID_LOG: Final = "nutzer_id={}"  # Logging-Template für Nutzer-IDs
 
 """Repository fuer persistente Nutzerdaten."""
@@ -138,7 +139,7 @@ class NutzerRepository:
         :return: Gefundener Nutzer, falls vorhanden, sonst None
         :rtype: Nutzer | None
         """
-        logger.debug("email={}", email)
+        logger.debug(EMAIL_LOG, email)
 
         statement: Final = (
             select(Nutzer)
@@ -230,7 +231,7 @@ class NutzerRepository:
         :return: True, falls es die Emailadresse bereits gibt, False sonst
         :rtype: bool
         """
-        logger.debug("email={}", email)
+        logger.debug(EMAIL_LOG, email)
 
         statement: Final = select(func.count()).where(Nutzer.email == email)
         anzahl: Final = session.scalar(statement)
@@ -251,7 +252,7 @@ class NutzerRepository:
         :return: True, falls es die Emailadresse bereits gibt, False sonst
         :rtype: bool
         """
-        logger.debug("email={}", email)
+        logger.debug(EMAIL_LOG, email)
 
         statement: Final = select(Nutzer.id).where(Nutzer.email == email)
         id_db: Final = session.scalar(statement)
