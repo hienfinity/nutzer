@@ -3,7 +3,7 @@
 from http import HTTPStatus
 from typing import Final
 
-from common_test import ctx, put, rest_url
+from common_test import auth_headers, ctx, put, rest_url
 from pytest import mark
 
 EMAIL_UPDATE: Final = "alice@example.de.put"
@@ -26,7 +26,8 @@ def test_put() -> None:
         "rolle": "NUTZER",
         "status": "AKTIV",
     }
-    headers = {"If-Match": if_match}
+    headers = auth_headers()
+    headers["If-Match"] = if_match
 
     # act
     response: Final = put(
@@ -57,7 +58,8 @@ def test_put_invalid() -> None:
         "rolle": "UNGUELTIG",
         "status": "AKTIV",
     }
-    headers = {"If-Match": '"0"'}
+    headers = auth_headers()
+    headers["If-Match"] = '"0"'
 
     # act
     response: Final = put(
@@ -91,7 +93,8 @@ def test_put_nicht_vorhanden() -> None:
         "rolle": "NUTZER",
         "status": "AKTIV",
     }
-    headers = {"If-Match": '"0"'}
+    headers = auth_headers()
+    headers["If-Match"] = '"0"'
 
     # act
     response: Final = put(
@@ -122,7 +125,8 @@ def test_put_email_exists() -> None:
         "rolle": "NUTZER",
         "status": "AKTIV",
     }
-    headers = {"If-Match": '"0"'}
+    headers = auth_headers()
+    headers["If-Match"] = '"0"'
 
     # act
     response: Final = put(
@@ -158,6 +162,7 @@ def test_put_ohne_versionsnr() -> None:
     response: Final = put(
         f"{rest_url}/{nutzer_id}",
         json=geaenderter_nutzer,
+        headers=auth_headers(),
         verify=ctx,
     )
 
@@ -181,7 +186,8 @@ def test_put_alte_versionsnr() -> None:
         "rolle": "NUTZER",
         "status": "AKTIV",
     }
-    headers = {"If-Match": '"-1"'}
+    headers = auth_headers()
+    headers["If-Match"] = '"-1"'
 
     # act
     response: Final = put(
@@ -211,7 +217,8 @@ def test_put_ungueltige_versionsnr() -> None:
         "rolle": "NUTZER",
         "status": "AKTIV",
     }
-    headers = {"If-Match": '"xy"'}
+    headers = auth_headers()
+    headers["If-Match"] = '"xy"'
 
     # act
     response: Final = put(
@@ -242,7 +249,8 @@ def test_put_versionsnr_ohne_quotes() -> None:
         "rolle": "NUTZER",
         "status": "AKTIV",
     }
-    headers = {"If-Match": "0"}
+    headers = auth_headers()
+    headers["If-Match"] = "0"
 
     # act
     response: Final = put(
