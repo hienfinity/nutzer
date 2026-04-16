@@ -1,3 +1,5 @@
+EMAIL_LOG: Final = "email={}"  # Logging-Template für Email
+NUTZER_ID_LOG: Final = "nutzer_id={}"  # Logging-Template für Nutzer-IDs
 
 """Repository fuer persistente Nutzerdaten."""
 
@@ -25,7 +27,7 @@ class NutzerRepository:
         :return: Der gefundene Nutzer oder None
         :rtype: Nutzer | None
         """
-        logger.debug("nutzer_id={}", nutzer_id)
+        logger.debug(NUTZER_ID_LOG, nutzer_id)
 
         if nutzer_id is None:
             return None
@@ -137,7 +139,7 @@ class NutzerRepository:
         :return: Gefundener Nutzer, falls vorhanden, sonst None
         :rtype: Nutzer | None
         """
-        logger.debug("email={}", email)
+        logger.debug(EMAIL_LOG, email)
 
         statement: Final = (
             select(Nutzer)
@@ -229,7 +231,7 @@ class NutzerRepository:
         :return: True, falls es die Emailadresse bereits gibt, False sonst
         :rtype: bool
         """
-        logger.debug("email={}", email)
+        logger.debug(EMAIL_LOG, email)
 
         statement: Final = select(func.count()).where(Nutzer.email == email)
         anzahl: Final = session.scalar(statement)
@@ -250,7 +252,7 @@ class NutzerRepository:
         :return: True, falls es die Emailadresse bereits gibt, False sonst
         :rtype: bool
         """
-        logger.debug("email={}", email)
+        logger.debug(EMAIL_LOG, email)
 
         statement: Final = select(Nutzer.id).where(Nutzer.email == email)
         id_db: Final = session.scalar(statement)
@@ -292,7 +294,7 @@ class NutzerRepository:
 
         session.add(instance=nutzer)
         session.flush(objects=[nutzer])
-        logger.debug("nutzer_id={}", nutzer.id)
+        logger.debug(NUTZER_ID_LOG, nutzer.id)
         return nutzer
 
 
@@ -318,7 +320,7 @@ class NutzerRepository:
         :param nutzer_id: Die ID des zu löschenden Nutzers
         :param session: Session für SQLAlchemy
         """
-        logger.debug("nutzer_id={}", nutzer_id)
+        logger.debug(NUTZER_ID_LOG, nutzer_id)
 
         if (nutzer := self.find_by_id(nutzer_id=nutzer_id, session=session)) is None:
             return

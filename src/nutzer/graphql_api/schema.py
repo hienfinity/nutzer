@@ -1,3 +1,4 @@
+CURRENT_USER_LOG: Final = "current_user={}"
 """Schema fuer GraphQL durch Strawberry."""
 
 from collections.abc import Sequence
@@ -65,7 +66,7 @@ class Query:
         logger.debug("nutzer_id={}", nutzer_id)
 
         user = _require_roles(info, Role.ADMIN, Role.NUTZER)
-        logger.debug("current_user={}", user)
+        logger.debug(CURRENT_USER_LOG, user)
 
         try:
             nutzer_dto: Final = _service.find_by_id(nutzer_id=int(nutzer_id))
@@ -85,7 +86,7 @@ class Query:
         logger.debug("suchparameter={}", suchparameter)
 
         user = _require_roles(info, Role.ADMIN)
-        logger.debug("current_user={}", user)
+        logger.debug(CURRENT_USER_LOG, user)
 
         suchparameter_dict: Final[dict[str, str | None]] = dict(vars(suchparameter))
         suchparameter_filtered = {
@@ -116,7 +117,7 @@ class Mutation:
         """Einen neuen Nutzer anlegen."""
         logger.debug("nutzer_input={}", nutzer_input)
         user = _require_roles(info, Role.ADMIN)
-        logger.debug("current_user={}", user)
+        logger.debug(CURRENT_USER_LOG, user)
 
         nutzer_dict = nutzer_input.__dict__
         nutzer_dict["adresse"] = nutzer_input.adresse.__dict__
