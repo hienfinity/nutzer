@@ -3,7 +3,7 @@
 from http import HTTPStatus
 from typing import Final
 
-from common_test import ctx, delete, rest_url
+from common_test import auth_headers, ctx, delete, rest_url
 from pytest import mark
 
 
@@ -12,10 +12,12 @@ from pytest import mark
 def test_delete() -> None:
     # arrange
     nutzer_id: Final = 60
+    headers: Final = auth_headers()
 
     # act
     response: Final = delete(
         f"{rest_url}/{nutzer_id}",
+        headers=headers,
         verify=ctx,
     )
 
@@ -28,10 +30,12 @@ def test_delete() -> None:
 def test_delete_not_found() -> None:
     # arrange
     nutzer_id: Final = 999999
+    headers: Final = auth_headers()
 
     # act
     response: Final = delete(
         f"{rest_url}/{nutzer_id}",
+        headers=headers,
         verify=ctx,
     )
 
