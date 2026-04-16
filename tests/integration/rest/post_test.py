@@ -4,7 +4,7 @@ from http import HTTPStatus
 from re import search
 from typing import Final
 
-from common_test import ctx, post, rest_url
+from common_test import auth_headers, ctx, post, rest_url
 from pytest import mark
 
 
@@ -36,7 +36,8 @@ def test_post() -> None:
             "sprache": "de",
         },
     }
-    headers = {"Content-Type": "application/json"}
+    headers = auth_headers()
+    headers["Content-Type"] = "application/json"
 
     # act
     response: Final = post(
@@ -83,7 +84,8 @@ def test_post_invalid() -> None:
             "sprache": "",
         },
     }
-    headers = {"Content-Type": "application/json"}
+    headers = auth_headers()
+    headers["Content-Type"] = "application/json"
 
     # act
     response: Final = post(
@@ -132,7 +134,8 @@ def test_post_email_exists() -> None:
             "sprache": "de",
         },
     }
-    headers = {"Content-Type": "application/json"}
+    headers = auth_headers()
+    headers["Content-Type"] = "application/json"
 
     # act
     response: Final = post(
@@ -152,7 +155,8 @@ def test_post_email_exists() -> None:
 def test_post_invalid_json() -> None:
     # arrange
     json_invalid: Final = '{"nachname" "Nachname"}'
-    headers = {"Content-Type": "application/json"}
+    headers = auth_headers()
+    headers["Content-Type"] = "application/json"
 
     # act
     response: Final = post(
