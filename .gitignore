@@ -29,5 +29,3 @@ extras/compose/nutzer/.env
 src/nutzer/config/resources/tls/key.pem
 src/nutzer/config/resources/app.toml
 extras/compose/nutzer/app.toml
-src\nutzer\config\resources\app.toml
-extras\compose\nutzer\app.toml
